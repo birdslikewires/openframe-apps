@@ -1,1 +1,37 @@
 # openframe-apps
+
+Apps and screensavers for [Sprite](https://github.com/birdslikewires/openframe-sprite), the
+OpenFrame's touch shell, and the apt repository they're installed from:
+[apps.openbeak.net](https://apps.openbeak.net). OpenFrames find them in Sprite's Shop.
+
+Every OpenFrame running [openframe-linux](https://github.com/birdslikewires/openframe-linux)
+knows this repository already: openframe-scripts adds it, with its own signing key, and pins it
+so it can only ever supply packages named `ofapp-*`, never anything of the system's. Apps a unit
+has installed are updated overnight with the rest of its updates.
+
+## How it works
+
+- **Recipes, not packages.** Each app is a folder in `apps/`: its manifest, what the Shop says
+  about it, and how to build it. CI builds it into an `ofapp-<id>` package, checks it, signs the
+  repository and publishes it. Nobody uploads a package.
+- **Two suites,** as OpenBeak's other repositories have: what's published goes to
+  `trixie-testing` first, which test units take (OF-BOOT/settings/test.txt), and reaches
+  `trixie`, every OpenFrame, when it's promoted by "ok" on the repository's testing issue.
+- **Signed with a key of its own** (OpenFrame Apps, `B17C E4B9 D466 6458 FFFB AD99 C0A0 A443
+  333D C2F6`; `ci/openframe-apps.gpg`), which signs nothing else.
+- **Apps can't touch the system.** A package may install files only (no maintainer scripts),
+  only in its own places, and it runs in Sprite's sandbox with only what its manifest asks for.
+
+The plan in full is in openframe-sprite's [docs/shop.md](https://github.com/birdslikewires/openframe-sprite/blob/main/docs/shop.md).
+Building apps from recipes arrives with the first app; until then the repository is published
+with its suites empty, so OpenFrames can use it from the start.
+
+## Contributing an app
+
+By pull request, adding a folder to `apps/`. Every recipe is reviewed before it's merged.
+
+## Licence
+
+This repository's own work is under the GNU General Public License, version 3 or (at your
+option) any later version (see [LICENSE](LICENSE)). Copyright 2026 Andrew Davison. Each app
+keeps its own licence, given in its recipe.

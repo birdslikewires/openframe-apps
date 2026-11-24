@@ -1,0 +1,94 @@
+name: publish
+run-name: publish apps.openbeak.net
+
+# Keeps apps.openbeak.net, the apt repository Sprite's Shop installs apps from, on the repo
+# branch (GitHub Pages, served at apps.openbeak.net): its two suites, trixie (every OpenFrame)
+# and trixie-testing (test units, OF-BOOT/settings/test.txt), indexed and signed with the
+# OpenFrame Apps key, which nothing else uses. openframe-scripts sets units up to trust it for
+# ofapp-* packages only (its pin), and to take their updates overnight.
+#
+# Building the apps from their recipes (apps/<id>/) and publishing them to testing comes with
+# the first app; until then this publishes the suites empty, so units can use the repository
+# from the start (an apt source that isn't there yet would fail every unit's update check).
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/**'
+      - 'ci/**'
+      - '.github/workflows/publish.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write   # the testing issue (ci/testing-issue.sh), once there are apps
+
+concurrency:
+  group: build-package
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install tools
+        run: sudo apt-get install -y apt-utils dpkg-dev
+
+      - name: Ensure repo branch exists
+        run: |
+          git fetch origin repo:refs/remotes/origin/repo 2>/dev/null || {
+            git checkout --orphan repo-init && git rm -rfq . &&
+            echo apps.openbeak.net > CNAME && git add CNAME &&
+            git -c user.name="github-actions[bot]" -c user.email="github-actions[bot]@users.noreply.github.com" \
+              commit -qm "apt repository" && git push origin repo-init:repo && git checkout -q "${GITHUB_SHA}"; }
+
+      - name: Checkout repo branch
+        uses: actions/checkout@v7
+        with:
+          ref: repo
+          path: apt-repo
+
+      # The apps are signed with a key of their own (OpenFrame Apps), never the system
+      # repositories' one: anything else stops here.
+      - name: Import GPG signing key
+        env:
+          KEY: ${{ secrets.APT_SIGNING_KEY_OPENFRAME_APPS }}
+        run: |
+          echo "${KEY}" | gpg --batch --import
+          FPR=$(gpg --batch --with-colons --list-secret-keys | awk -F: '/^sec/ { s = 1; next } s && /^fpr/ { print $10; s = 0 }')
+          [ "${FPR}" = B17CE4B9D4666458FFFBAD99C0A0A443333DC2F6 ] || { echo "Signing key ${FPR} is not the OpenFrame Apps key"; exit 1; }
+          echo "GPG_KEY_ID=${FPR}" >> $GITHUB_ENV
+          # the public half in the repository is the same key
+          gpg --show-keys --with-colons ci/openframe-apps.gpg | grep -q "^fpr:::::::::${FPR}:" ||
+            { echo "ci/openframe-apps.gpg isn't the signing key's public half"; exit 1; }
+
+      # ci/apt-suite.sh, tested before it's used.
+      - name: Test the testing and released suites
+        run: bash tests/test_apt_suite.sh
+
+      - name: Update apt repository
+        env:
+          APT_NAME: OpenFrame Apps
+          APT_ORIGIN: OpenFrame Apps
+        run: |
+          export SIGN_ARGS="--local-user ${GPG_KEY_ID}!"
+          bash ci/apt-suite.sh index trixie
+          bash ci/apt-suite.sh index trixie-testing
+          gpg --export "${GPG_KEY_ID}" > apt-repo/key.gpg
+          echo apps.openbeak.net > apt-repo/CNAME
+          bash ci/apt-suite.sh listing
+
+      - name: Push apt repository
+        run: |
+          cd apt-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && echo "No changes to commit" || \
+            git commit -m "apt: index both suites ($(git -C .. rev-parse --short HEAD))"
+          git push origin repo
