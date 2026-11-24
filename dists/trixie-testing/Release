@@ -1,0 +1,20 @@
+Architectures: all i386
+Codename: trixie-testing
+Components: main
+Date: Tue, 24 Nov 2026 15:01:40 +0000
+Description: OpenFrame Apps packages before release, for test units
+Label: OpenFrame Apps testing
+Origin: OpenFrame Apps
+Suite: trixie-testing
+MD5Sum:
+ d41d8cd98f00b204e9800998ecf8427e                0 main/binary-i386/Packages
+ d3f1ec926dd0479c47ea84a098d0b973               29 main/binary-i386/Packages.gz
+SHA1:
+ da39a3ee5e6b4b0d3255bfef95601890afd80709                0 main/binary-i386/Packages
+ 60b84b87d88e6b969a99703cfa368b736002dd8c               29 main/binary-i386/Packages.gz
+SHA256:
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855                0 main/binary-i386/Packages
+ f0f80b8d034598e82ff00a91e10bcd1431743ba6e21adab72eaee48dabf6ff74               29 main/binary-i386/Packages.gz
+SHA512:
+ cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e                0 main/binary-i386/Packages
+ 79d9f90f674e0a07478bc9572b87c547e05af738234c22571ddafd057f4ac0e0d59406053fd1fa6afbee4aeb6bd4884e1be26b9a736b34c917f6f9cfa6839906               29 main/binary-i386/Packages.gz
