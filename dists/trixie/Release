@@ -1,20 +1,24 @@
 Architectures: all i386
 Codename: trixie
 Components: main
-Date: Tue, 24 Nov 2026 15:01:39 +0000
+Date: Tue, 24 Nov 2026 19:54:50 +0000
 Description: OpenFrame Apps packages
 Label: OpenFrame Apps
 Origin: OpenFrame Apps
 Suite: trixie
 MD5Sum:
+ 0e7f0e292fd44d3bc0c98191b9f5b475             1122 Release
  d41d8cd98f00b204e9800998ecf8427e                0 main/binary-i386/Packages
- be179569e085fdb4f98060feb10ac0a0               29 main/binary-i386/Packages.gz
+ a9522c2570289707240acd9dc253f993               29 main/binary-i386/Packages.gz
 SHA1:
+ 5bcfea5fa9310ca8a43b676cc2a773ecf11d609f             1122 Release
  da39a3ee5e6b4b0d3255bfef95601890afd80709                0 main/binary-i386/Packages
- 061bc27791d4f36a35412bf281edb87db6042538               29 main/binary-i386/Packages.gz
+ 0ee1ddee075803a965a07502a6c1a12fb6d8b0b6               29 main/binary-i386/Packages.gz
 SHA256:
+ cc665ce2f747c00c4ce0471b468b7173dd0584b3c05ca941edd89b82b332e49b             1122 Release
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855                0 main/binary-i386/Packages
- 4347e52c633349309f3d91397dd7281a59f6154c658d0dd9740ac7520f6e3fd2               29 main/binary-i386/Packages.gz
+ 6854337560d34751118f150888f2bf54618153f79eb2dd09af958bf729bdb72a               29 main/binary-i386/Packages.gz
 SHA512:
+ 71db093255d263b52c02f47eb64c99433de093009f7fc00d93debab8a7f1c6a83eb739169b705d2c06d29496d24ce092866fd0d8f8f4af39eb181c091a1c761c             1122 Release
  cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e                0 main/binary-i386/Packages
- 55ea869c36f5deb6ef4e1729faf14443f335784ff38a914dd24e153ddc95d15135b46ac57247c69d321e9ad2ccb8a21f122008d2be88b12be16fa68a74d307a3               29 main/binary-i386/Packages.gz
+ 742991cfefe4ccb83e631d002dcaecfa223e1de29a71b95ce70b2022dded67dae8192bc7dfcc0c7a68b4516abbace4d828f18ba02cb9db0e3b9e258ad69a4a03               29 main/binary-i386/Packages.gz

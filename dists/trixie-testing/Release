@@ -1,20 +1,24 @@
 Architectures: all i386
 Codename: trixie-testing
 Components: main
-Date: Tue, 24 Nov 2026 15:01:40 +0000
+Date: Tue, 24 Nov 2026 19:54:50 +0000
 Description: OpenFrame Apps packages before release, for test units
 Label: OpenFrame Apps testing
 Origin: OpenFrame Apps
 Suite: trixie-testing
 MD5Sum:
+ 29f652d8a6c59214d28985f3bf0ac61c             1177 Release
  d41d8cd98f00b204e9800998ecf8427e                0 main/binary-i386/Packages
- d3f1ec926dd0479c47ea84a098d0b973               29 main/binary-i386/Packages.gz
+ 917f985cb1908d1fa652956541996ce5               29 main/binary-i386/Packages.gz
 SHA1:
+ bb0ea359281049d2f55a7a79a9a715e10a47ee8a             1177 Release
  da39a3ee5e6b4b0d3255bfef95601890afd80709                0 main/binary-i386/Packages
- 60b84b87d88e6b969a99703cfa368b736002dd8c               29 main/binary-i386/Packages.gz
+ bfcb4480f01ddd526b0a1a3baded24d718833ae9               29 main/binary-i386/Packages.gz
 SHA256:
+ c27689666bd1b073380de9c6f517dfffe080d6a91602cef9a52eec4a0bdee90a             1177 Release
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855                0 main/binary-i386/Packages
- f0f80b8d034598e82ff00a91e10bcd1431743ba6e21adab72eaee48dabf6ff74               29 main/binary-i386/Packages.gz
+ 498af5088ea05d7ac30d284f3f9412cd62a0f79bb397ca7140d9c27eced37073               29 main/binary-i386/Packages.gz
 SHA512:
+ 6923d4684afcf53e7f462682427c8c36f8039a303b7cb7a888c68e4301c7c6534539ec65d59717e1c8f12c2ee49e4066618b855f054815e15b5d7db4dd12bcc6             1177 Release
  cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e                0 main/binary-i386/Packages
- 79d9f90f674e0a07478bc9572b87c547e05af738234c22571ddafd057f4ac0e0d59406053fd1fa6afbee4aeb6bd4884e1be26b9a736b34c917f6f9cfa6839906               29 main/binary-i386/Packages.gz
+ 9a7e3cdc7e735e137c02ecd52349f2eb2b417a2c24399c5227a124bb066319d918167d4202ea5e6351ff8bca22e09b05200f975135d5b309dc477885690d9d38               29 main/binary-i386/Packages.gz
