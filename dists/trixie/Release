@@ -1,24 +1,24 @@
 Architectures: all i386
 Codename: trixie
 Components: main
-Date: Tue, 24 Nov 2026 22:34:34 +0000
+Date: Tue, 24 Nov 2026 23:00:29 +0000
 Description: OpenFrame Apps packages
 Label: OpenFrame Apps
 Origin: OpenFrame Apps
 Suite: trixie
 MD5Sum:
- 8ef29c9f64af52813308dd011671b190             1494 Release
+ 94573de77c3fbd8438f33695f346e905             1494 Release
  d41d8cd98f00b204e9800998ecf8427e                0 main/binary-i386/Packages
- a746646c6804bd8457f194c28fbdd904               29 main/binary-i386/Packages.gz
+ 8e174b42174c1d70039e5b01bb2891b3               29 main/binary-i386/Packages.gz
 SHA1:
- cd328c2078c2c7f191e6b08c93a6fd006c751b42             1494 Release
+ 4eed1afc456bc6346577115dfc17d03b318cb548             1494 Release
  da39a3ee5e6b4b0d3255bfef95601890afd80709                0 main/binary-i386/Packages
- e1e7e6f13cf186ab5a486b3b439875aeae7ccabc               29 main/binary-i386/Packages.gz
+ 0d80571a61e1130024895a9ae5eb83b66853e71c               29 main/binary-i386/Packages.gz
 SHA256:
- 2537ef0bcc47ecaa73fcfdfc444fcfb9b3bd44871e171cc2274e11c23996343a             1494 Release
+ fdf4cfb9cf0464a4264e0f1576f3f7b6fb3b5c011f37990f9993f715328757b0             1494 Release
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855                0 main/binary-i386/Packages
- 9d21d97bf4a5a1de2de19f80bd3fb405dbf1a46cd8b2e2df0a39f54fe9a74480               29 main/binary-i386/Packages.gz
+ 3615d2489977e6adff8f8430e65eb9ff38654742157d1acdb77251467f4e9ca9               29 main/binary-i386/Packages.gz
 SHA512:
- 5f29f9c872dc84f537c3ebc681545e42c0a7449d667e15a3851b109ae105bc7cf5069b48379733125eba20947ab8088702b83798afc65180691732b3facd3387             1494 Release
+ 88ddbde679c895c2af49482b87b0b015805376867090956881a0705bf4af3cbcdc1c1264212d44d273e5c2a9323e01ce339edba2c41d4d21b4349c940df27451             1494 Release
  cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e                0 main/binary-i386/Packages
- 8a1d82d60c22ce5f1b926ca2207b68f8ff96f71a8af4aca118c876d8cef2db2a9e50f50b12cac6b1687f559b408e2c0bc95268a009236ddc1c1dfcfa1336e4d8               29 main/binary-i386/Packages.gz
+ 8a9e1eaf8dff761b2d24bf620ca6f9a6aaf571bc93309f7275e80e9e7250db33bee00d9a24794d5d9a3a3a3bdf1db8c444aad6bd20e122ca5c7178ed30489f1b               29 main/binary-i386/Packages.gz
