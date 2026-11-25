@@ -11,6 +11,7 @@ Each app has a folder here named for its id, `apps/<id>/`, using lower-case lett
 | `build-depends.txt` | Debian packages needed to build it (optional). |
 | `depends.txt` | Debian packages it needs to run, beyond the libraries its programs link against, which are found automatically (optional). |
 | `test.sh` | A check that it works once installed (optional). |
+| `update.sh` | Finds the newest upstream release, so the app is kept up to date (optional, see below). |
 
 ## app.txt
 
@@ -72,6 +73,12 @@ It runs with `bash -eu`, as root in a throwaway i386 Debian Trixie container, in
 | `$ID`, `$PKG`, `$VERSION` | the app's id, its package and the package's version |
 
 Fetch a release rather than a branch, and check it against its SHA-256 in `build.sh`, so the recipe says exactly what's built. Files go only in the app's own places. The build writes the package's control file itself, so there are no maintainer scripts and nothing else to fill in.
+
+## update.sh
+
+An app built from someone else's releases can keep itself current. `update.sh` prints the newest release's version and the SHA-256 of what `build.sh` fetches, as `<version> <sha256>`, and runs in a throwaway container with `curl` and `jq`. Every 6 hours, `upstream.yml` runs it, and when the release is newer than `shop.txt`'s `version`, it updates that and the `SHA256=` line in `build.sh` (which must have exactly one), commits the change and publishes it to testing. From there it needs an ok on the testing issue, like any other change. Ignore betas and pre-releases, so owners only get stable versions.
+
+The app's own updater, if it has one, should be left out of the build, as an app can't write over its own files.
 
 ## What every package is checked for
 

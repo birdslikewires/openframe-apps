@@ -1,0 +1,60 @@
+name: upstream
+run-name: check apps for new upstream releases
+
+# Every 6 hours, checks the apps that follow an upstream release (those with an update.sh, see ci/upstream.sh) for a newer one. For each, it commits the new version and its SHA-256 to the recipe on main, then starts publish.yml, which builds and checks it and puts it in testing. The testing issue then asks for an ok before any OpenFrame but a test unit gets it, as for any other change.
+#
+# publish.yml is started by hand (workflow_dispatch), as a push made with the workflow's own token doesn't start other workflows.
+
+on:
+  schedule:
+    - cron: '30 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write   # the recipe's new version, committed to main
+  actions: write    # starting publish.yml
+
+concurrency:
+  group: upstream
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Check for new releases
+        id: check
+        run: |
+          # (an app whose check fails doesn't hold the others back, and fails the run at the end)
+          rc=0; bash ci/upstream.sh > updated.txt || rc=$?
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          cat updated.txt
+          if [ -s updated.txt ]; then echo "updated=yes" >> "$GITHUB_OUTPUT"; else echo "updated=no" >> "$GITHUB_OUTPUT"; fi
+
+      # A commit for each app, so each has its own version (ci/app-version.sh counts them).
+      - name: Commit the new versions
+        if: steps.check.outputs.updated == 'yes'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          while read -r id old new; do
+            name=$(sed -n 's/^name=//p' "apps/$id/app.txt" | tail -1)
+            git add "apps/$id"
+            git commit -q -m "Update ${name:-$id} to $new" -m "Upstream's newest release, found by upstream.yml. It was $old." -m "Source SHA-256 $(sed -n 's/^SHA256=//p' "apps/$id/build.sh")"
+          done < updated.txt
+          git push origin HEAD:main
+
+      - name: Build and publish to testing
+        if: steps.check.outputs.updated == 'yes'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run publish.yml --ref main
+
+      - name: Fail if an app couldn't be checked
+        if: steps.check.outputs.rc != '0'
+        run: |
+          echo "ci/upstream.sh couldn't check every app (see Check for new releases)."
+          exit 1
