@@ -1,0 +1,7 @@
+# HamClock, as the interface shows and runs it. -t 10 keeps it to about 10% of the CPU, as it was written for a microcontroller and otherwise spins a whole core. -b points it at the Open HamClock Backend, as clearskyinstitute.com, the original backend, is being retired. It needs the network, because it lives on its data.
+name=HamClock
+exec=/usr/lib/ofapp-hamclock/hamclock -t 10 -b ohb.hamclock.app:80
+icon=radio
+color=b8860b
+display=x11
+allow=network

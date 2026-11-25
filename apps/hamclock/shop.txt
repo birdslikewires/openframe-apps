@@ -1,0 +1,12 @@
+summary=A live world map, space weather, and DX dashboard for amateur radio operators.
+version=4.33
+author=Elwood Downey and the openhamclock contributors
+licence=MIT
+source=https://github.com/openhamclock/hamclock
+community=https://discord.gg/wb8ATjVn6M
+
+HamClock displays what the sun and the ionosphere are doing to radio, with solar flux, sunspots, the K index and band conditions, and DX spots if you'd like them.
+
+The first time it starts, it asks a few questions to set itself up. Its keyboard types the upper character on a key when you tap the top half, and the lower one from the bottom half, so a USB keyboard makes this easier.
+
+While it's running, you can also watch HamClock in a browser on another computer, by going to your OpenFrame's address with :8081/live.html on the end, such as http://192.168.1.20:8081/live.html. The address on its own won't find it.

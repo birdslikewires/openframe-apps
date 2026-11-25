@@ -1,0 +1,41 @@
+name: check
+run-name: check the apps a pull request changes
+
+# A pull request's recipes, built, checked and tested as publish.yml would (ci/build-apps.sh), before Andy reviews them; nothing is signed or published. The apps it changes (apps/<id>/), or all of them when it changes how they're built (ci/). Runs without secrets and with the repository read-only, as a pull request's code is anyone's.
+
+on:
+  pull_request:
+    paths:
+      - 'apps/**'
+      - 'ci/**'
+      - 'tests/**'
+      - '.github/workflows/check.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0    # versions count commits (ci/app-version.sh)
+          persist-credentials: false
+
+      - name: Test the package checks
+        run: bash tests/test_check_app.sh
+
+      - name: Build, check and test what it changes
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          changed=$(git diff --name-only "$BASE"...HEAD)
+          if echo "$changed" | grep -q '^ci/'; then
+            ids=$(for d in apps/*/; do [ -f "$d/shop.txt" ] && basename "$d"; done)
+          else
+            ids=$(echo "$changed" | sed -n 's|^apps/\([^/]*\)/.*|\1|p' | sort -u | while read -r id; do [ -d "apps/$id" ] && echo "$id"; done)
+          fi
+          [ -n "$ids" ] || { echo "No apps to build."; exit 0; }
+          bash ci/build-apps.sh out $ids

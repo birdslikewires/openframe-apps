@@ -1,15 +1,9 @@
 name: publish
-run-name: publish apps.openbeak.net
+run-name: build apps and publish apps.openbeak.net
 
-# Keeps apps.openbeak.net, the apt repository Sprite's Shop installs apps from, on the repo
-# branch (GitHub Pages, served at apps.openbeak.net): its two suites, trixie (every OpenFrame)
-# and trixie-testing (test units, OF-BOOT/settings/test.txt), indexed and signed with the
-# OpenFrame Apps key, which nothing else uses. openframe-scripts sets units up to trust it for
-# ofapp-* packages only (its pin), and to take their updates overnight.
+# Builds the apps whose recipes (apps/<id>/) have changed since they were published, checks them, and publishes them to apps.openbeak.net's testing suite, where test units take them (OF-BOOT/settings/test.txt); "ok" on the testing issue releases them to every OpenFrame (promote.yml). The repository is the repo branch (GitHub Pages, served at apps.openbeak.net): two suites, trixie and trixie-testing, signed with the OpenFrame Apps key, which nothing else uses. openframe-scripts sets units up to trust it for ofapp-* packages only (its pin), and to take their updates overnight.
 #
-# Building the apps from their recipes (apps/<id>/) and publishing them to testing comes with
-# the first app; until then this publishes the suites empty, so units can use the repository
-# from the start (an apt source that isn't there yet would fail every unit's update check).
+# There are two jobs, so a recipe's own code never runs where the signing key is. build, with no secrets and the repository read-only, builds, checks and tests each app in throwaway containers (ci/build-apps.sh), and publish takes only the packages it made, and signs.
 
 on:
   push:
@@ -17,20 +11,64 @@ on:
     paths:
       - 'apps/**'
       - 'ci/**'
+      - 'tests/**'
       - '.github/workflows/publish.yml'
   workflow_dispatch:
-
-permissions:
-  contents: write
-  issues: write   # the testing issue (ci/testing-issue.sh), once there are apps
 
 concurrency:
   group: build-package
   cancel-in-progress: false
 
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      built: ${{ steps.build.outputs.built }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0    # versions count this month's commits (ci/app-version.sh)
+          persist-credentials: false
+
+      # what's published already (none of it is built again)
+      - name: Checkout repo branch
+        uses: actions/checkout@v7
+        with:
+          ref: repo
+          path: apt-repo
+          persist-credentials: false
+
+      # ci/check-app.sh, tested before it's trusted with a recipe's package.
+      - name: Test the package checks
+        run: bash tests/test_check_app.sh
+
+      - name: Build, check and test the apps
+        id: build
+        run: |
+          bash ci/build-apps.sh out
+          if [ -s out/built.txt ]; then echo "built=yes" >> "$GITHUB_OUTPUT"; else echo "built=no" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Keep the packages for publishing
+        if: steps.build.outputs.built == 'yes'
+        uses: actions/upload-artifact@v7
+        with:
+          name: apps
+          path: |
+            out/built.txt
+            out/*/ofapp-*.deb
+            out/*/source-ofapp-*/
+          retention-days: 7
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write   # the testing issue (ci/testing-issue.sh)
 
     steps:
       - name: Checkout
@@ -53,8 +91,14 @@ jobs:
           ref: repo
           path: apt-repo
 
-      # The apps are signed with a key of their own (OpenFrame Apps), never the system
-      # repositories' one: anything else stops here.
+      - name: Fetch the packages
+        if: needs.build.outputs.built == 'yes'
+        uses: actions/download-artifact@v7
+        with:
+          name: apps
+          path: out
+
+      # The apps are signed with a key of their own (OpenFrame Apps), never the system repositories' one, and anything else stops here.
       - name: Import GPG signing key
         env:
           KEY: ${{ secrets.APT_SIGNING_KEY_OPENFRAME_APPS }}
@@ -77,8 +121,18 @@ jobs:
           APT_ORIGIN: OpenFrame Apps
         run: |
           export SIGN_ARGS="--local-user ${GPG_KEY_ID}!"
+          if [ -s out/built.txt ]; then
+            # only what's listed, the packages the build job made, each an ofapp-*
+            debs=$(cut -d' ' -f2 out/built.txt | sed 's|^|out/|')
+            for d in $debs; do
+              case "$(dpkg-deb -f "$d" Package)" in ofapp-*) ;; *) echo "$d isn't an app"; exit 1 ;; esac
+            done
+            bash ci/apt-suite.sh add trixie-testing $debs
+            bash ci/sources.sh add out
+          else
+            bash ci/apt-suite.sh index trixie-testing
+          fi
           bash ci/apt-suite.sh index trixie
-          bash ci/apt-suite.sh index trixie-testing
           gpg --export "${GPG_KEY_ID}" > apt-repo/key.gpg
           echo apps.openbeak.net > apt-repo/CNAME
           bash ci/apt-suite.sh listing
@@ -90,5 +144,15 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
           git diff --cached --quiet && echo "No changes to commit" || \
-            git commit -m "apt: index both suites ($(git -C .. rev-parse --short HEAD))"
+            git commit -m "apt: publish to testing ($(git -C .. rev-parse --short HEAD))"
           git push origin repo
+
+      - name: Update the testing issue
+        if: needs.build.outputs.built == 'yes'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ASSIGNEE: ${{ vars.TESTING_ASSIGNEE || 'andydvsn' }}   # who's told (an organisation can't be)
+        run: |
+          list=$(while read -r id deb; do echo "$(dpkg-deb -f "out/$deb" Package) $(dpkg-deb -f "out/$deb" Version)"; done < out/built.txt |
+            paste -sd, - | sed 's/,/, /g')
+          bash ci/testing-issue.sh "In testing: ${list} (${GITHUB_SHA::7})."

@@ -115,6 +115,7 @@ jobs:
           # Release not re-signed, say, was committed and pushed all the same)
           bash ci/apt-suite.sh promote ${LISTED} > promoted.txt
           cat promoted.txt
+          bash ci/sources.sh prune   # the source of versions in neither suite now
           bash ci/apt-suite.sh listing
           cd apt-repo
           git config user.name "github-actions[bot]"

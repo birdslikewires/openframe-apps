@@ -1,0 +1,125 @@
+#!/bin/bash
+# ci/check-app.sh <deb> <id> <icons.txt>: checks an app's package, as built, can do no more than an app should, whatever its recipe did. Needs dpkg-deb; doesn't install it (ci/test-app.sh does that). <icons.txt> is the interface's list of tile glyphs (openframe-sprite's src/icons.txt). Prints each problem and exits 1 if there are any.
+#
+#   - files only, with no maintainer scripts, triggers or conffiles (control and md5sums only)
+#   - only the control fields ci/build-app.sh writes, so no Pre-Depends, Conflicts, Breaks, Replaces, Provides, Essential and so on
+#   - files only in the app's own places, /usr/lib/ofapp-<id>/, /usr/share/ofapp-<id>/, /usr/share/doc/ofapp-<id>/ and its manifest, /usr/share/sprite/apps/<id>.app
+#   - only plain files, folders and symlinks that stay in those places; all root's, nothing setuid, setgid or sticky, nothing anyone else can write; plain names
+#   - its manifest one the interface reads, with no builtin=, a glyph the interface has, and only network, sound and microphone to ask for
+set -uo pipefail
+DEB=$1 ID=$2 ICONS=$3
+PKG=ofapp-$ID
+FAILS=0
+bad() { echo "$PKG: $*"; FAILS=$((FAILS + 1)); }
+
+[[ "$ID" =~ ^[a-z0-9][a-z0-9-]{0,39}$ ]] || bad "id $ID: lower-case letters, digits and - only, at most 40"
+
+# Control files
+members=$(dpkg-deb --ctrl-tarfile "$DEB" | tar -t | sed 's|^\./||' | grep -v '^$' | sort | tr '\n' ' ')
+[ "$members" = "control md5sums " ] || bad "control files other than control and md5sums: $members"
+
+# Control fields
+fields=$(dpkg-deb -f "$DEB" | sed -n 's/^\([A-Za-z0-9-]*\):.*/\1/p')
+for f in $fields; do
+	case "$f" in
+		Package|Version|Architecture|Section|Priority|Maintainer|Installed-Size|Depends|Homepage|Description) ;;
+		X-Sprite-Name|X-Sprite-Kind|X-Sprite-Icon|X-Sprite-Color|X-Sprite-Allow|X-Sprite-Author|X-Sprite-Licence|X-Sprite-Community) ;;
+		*) bad "control field $f isn't one an app has" ;;
+	esac
+done
+[ "$(dpkg-deb -f "$DEB" Package)" = "$PKG" ] || bad "Package is $(dpkg-deb -f "$DEB" Package), not $PKG"
+case "$(dpkg-deb -f "$DEB" Architecture)" in i386|all) ;; *) bad "Architecture isn't i386 or all" ;; esac
+[[ "$(dpkg-deb -f "$DEB" X-Sprite-Community)" =~ ^https://[^[:space:]]+$ ]] || bad "X-Sprite-Community, where to ask about the app, isn't an https:// address"
+
+# Its files, from tar's listing with numeric owners. An odd name (a space, a quote) comes quoted, so the check on names below refuses it, and anything after a name but a symlink's target is refused.
+listing=$(dpkg-deb --fsys-tarfile "$DEB" | tar -tv --numeric-owner --quoting-style=shell-escape) ||
+	bad "its files can't be listed"
+ok_place() {   # a path (no leading ./ or /) in the app's own places
+	case "$1" in
+		usr/lib/$PKG|usr/lib/$PKG/*|usr/share/$PKG|usr/share/$PKG/*|usr/share/doc/$PKG|usr/share/doc/$PKG/*) return 0 ;;
+		usr/share/sprite/apps/$ID.app) return 0 ;;
+	esac
+	return 1
+}
+manifest=no
+while read -r perms owner _size _date _time name rest; do
+	[ -n "$perms" ] || continue
+	name=${name#./}; name=${name%/}
+	type=${perms:0:1}
+	[ -n "$name" ] || continue
+	if [ "$type" = l ]; then
+		[[ "$rest" =~ ^-\>\ [^\ ]+$ ]] || { bad "$name: an odd symlink ($rest)"; continue; }
+	elif [ -n "$rest" ]; then
+		bad "$name $rest: an odd name"; continue
+	fi
+	[[ "$name" =~ ^[A-Za-z0-9._+@,=/-]+$ ]] || { bad "$name: names letters, digits and ._+@,=- only"; continue; }
+	[[ "/$name/" != */../* && "/$name/" != */./* ]] || { bad "$name: . or .. in its path"; continue; }
+	[ "$owner" = 0/0 ] || bad "$name: owned by $owner, not root"
+	[[ "$perms" =~ [sStT] ]] && bad "$name: setuid, setgid or sticky ($perms)"
+	if [ "$type" != l ] && [[ "${perms:5:1}${perms:8:1}" == *w* ]]; then bad "$name: others can write it ($perms)"; fi
+	if [ "$type" = d ]; then
+		case "$name" in usr|usr/lib|usr/share|usr/share/doc|usr/share/sprite|usr/share/sprite/apps) continue ;; esac
+	fi
+	ok_place "$name" || { bad "$name: not in the app's own places"; continue; }
+	case "$type" in
+		d) ;;
+		-) [ "$name" = "usr/share/sprite/apps/$ID.app" ] && manifest=yes ;;
+		l)
+			target=${rest#-> }
+			[ "$name" != "usr/share/sprite/apps/$ID.app" ] || bad "$name: the manifest is a symlink"
+			[[ "$target" =~ ^[A-Za-z0-9._+@,=/-]+$ ]] || { bad "$name: symlink to an odd name"; continue; }
+			# where it points, resolved from the link's folder, must be in the app's places too
+			if [ "${target:0:1}" = / ]; then path=${target#/}; else path="$(dirname "$name")/$target"; fi
+			resolved=""
+			IFS=/ read -ra parts <<< "$path"
+			for p in "${parts[@]}"; do
+				case "$p" in
+					""|.) ;;
+					..) if [[ "$resolved" == */* ]]; then resolved=${resolved%/*}; else resolved=""; fi ;;
+					*) resolved="${resolved:+$resolved/}$p" ;;
+				esac
+			done
+			ok_place "$resolved" || bad "$name: symlink out of the app's places, to $target"
+			;;
+		h) bad "$name: a hard link" ;;
+		*) bad "$name: not a plain file, folder or symlink ($perms)" ;;
+	esac
+done <<< "$listing"
+[ "$manifest" = yes ] || bad "no manifest, usr/share/sprite/apps/$ID.app"
+
+# The manifest, as the interface reads it (key=value, the last one for a key, # lines skipped)
+if [ "$manifest" = yes ]; then
+	m=$(dpkg-deb --fsys-tarfile "$DEB" | tar -xO "./usr/share/sprite/apps/$ID.app")
+	val() { sed -n "s/^$1=//p" <<< "$m" | tail -1 | sed 's/[[:space:]]*$//'; }
+	keys=$(grep -v '^#' <<< "$m" | grep '=' | sed 's/=.*//' | sort -u)
+	for k in $keys; do
+		case "$k" in
+			name|exec|icon|color|display|handle|bar|kind|allow) ;;
+			builtin) bad "manifest: builtin= is the interface's own" ;;
+			*) bad "manifest: $k= isn't something the interface reads" ;;
+		esac
+	done
+	name=$(val name) exec=$(val exec) icon=$(val icon)
+	[ -n "$name" ] || bad "manifest: no name="
+	[ "${#name}" -le 40 ] || bad "manifest: name= longer than 40"
+	[ "$name" = "$(dpkg-deb -f "$DEB" X-Sprite-Name)" ] || bad "X-Sprite-Name isn't the manifest's name="
+	[ -n "$exec" ] || bad "manifest: no exec="
+	[ "${#exec}" -lt 500 ] || bad "manifest: exec= too long"
+	if [ -n "$icon" ]; then
+		glyphs=$(sed 's/#.*//; s/=/ /' "$ICONS" | tr -s ' \t' '\n' | grep -v '^$')
+		grep -qxF "$icon" <<< "$glyphs" || [[ "$icon" =~ ^[A-Za-z0-9]{1,2}$ ]] ||
+			bad "manifest: icon=$icon isn't one of the interface's glyphs (src/icons.txt), or two letters"
+	fi
+	c=$(val color); [ -z "$c" ] || [[ "$c" =~ ^[0-9A-Fa-f]{6}$ ]] || bad "manifest: color=$c isn't RRGGBB"
+	v=$(val display); case "$v" in ""|x11|wayland) ;; *) bad "manifest: display=$v (x11 or wayland)" ;; esac
+	v=$(val handle); case "$v" in ""|normal|faint|hidden) ;; *) bad "manifest: handle=$v (normal, faint or hidden)" ;; esac
+	v=$(val bar); case "$v" in ""|yes|no) ;; *) bad "manifest: bar=$v (yes or no)" ;; esac
+	v=$(val kind); case "$v" in ""|app|screensaver) ;; *) bad "manifest: kind=$v (app or screensaver)" ;; esac
+	[ "${v:-app}" = "$(dpkg-deb -f "$DEB" X-Sprite-Kind)" ] || bad "X-Sprite-Kind isn't the manifest's kind="
+	for a in $(val allow); do
+		case "$a" in network|sound|microphone) ;; *) bad "manifest: allow=$a (network, sound or microphone)" ;; esac
+	done
+fi
+
+[ "$FAILS" -eq 0 ] || { echo "$PKG: $FAILS problem(s)"; exit 1; }
+echo "$PKG: package checks pass"
