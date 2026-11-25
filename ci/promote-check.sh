@@ -57,7 +57,7 @@ debs=(/promoted/*.deb)
 # Units take only ofapp-* packages from this repository (their pin gives anything else from it
 # -1), which these checks' local sources can't show: an app needing another package of ours
 # would pass here and never install on a unit. So nothing else goes in.
-others=$(for d in "${debs[@]}"; do dpkg-deb -f "$d" Package; done | grep -v '^ofapp-' | sort -u | tr "\n" " ")
+others=$(for d in "${debs[@]}"; do dpkg-deb -f "$d" Package; done | { grep -v '^ofapp-' || true; } | sort -u | tr "\n" " ")
 [ -z "$others" ] || { echo "Not apps (units only take ofapp-* packages from here): ${others}"; exit 1; }
 (cd /promoted && dpkg-scanpackages . > Packages 2>/dev/null)
 (cd /released && dpkg-scanpackages . > Packages 2>/dev/null)
