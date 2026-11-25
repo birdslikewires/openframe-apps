@@ -4,40 +4,40 @@ Hash: SHA512
 Architectures: all i386
 Codename: trixie-testing
 Components: main
-Date: Wed, 25 Nov 2026 11:57:13 +0000
+Date: Wed, 25 Nov 2026 12:54:27 +0000
 Description: OpenFrame Apps packages before release, for test units
 Label: OpenFrame Apps testing
 Origin: OpenFrame Apps
 Suite: trixie-testing
 MD5Sum:
- 75c8b49423fac965ced0e84cc42f58c3             1549 Release
+ 742def97ec5b0d40d46b2246d044b70f             1549 Release
  3d5197fbb2af650a01d964e1edf56d8f             1506 main/binary-i386/Packages
- 90bfb2442c53e254addca6cc9bb91f80              931 main/binary-i386/Packages.gz
+ 8a8bf08abe991e83abfc57000821f7d2              931 main/binary-i386/Packages.gz
 SHA1:
- bd2f1f30b54a2549e79630c16421d5a7629d7320             1549 Release
+ 7f75cd5b652c8fd9099f44f6e07a50e807be0134             1549 Release
  ddeb8101d5f88cfb2b923e06c11724511fccf347             1506 main/binary-i386/Packages
- 4398478bcdb73f733eb40cd7ef08d345e3e72d31              931 main/binary-i386/Packages.gz
+ decb79f20c2acc692d436876ad882a425dfb5736              931 main/binary-i386/Packages.gz
 SHA256:
- ca9283e31ff9c84ac0e7053935e5907d33c542ff13adb8060803806ca12a7af9             1549 Release
+ 41b9523acda53c9ffa5498d87c58531ad320c36c0f2820218db53afe3da5c6ca             1549 Release
  d92758cc3f50b3609e65b44af0cafece915e1f879668ba5784fc8dbc61c5b405             1506 main/binary-i386/Packages
- e99280d04ed8567ad906002c8937562de5e22119b867bd9ce228789dcd19e200              931 main/binary-i386/Packages.gz
+ 430d53e027a1131a1f94a92ba970ee7c2015169cf0e32a4ed0ef167b24793096              931 main/binary-i386/Packages.gz
 SHA512:
- 36618984abe404d172a228d7335c59672e58208eb9f789e97ebd82410b94f4135169ed00b7264758e155172109a8e63bfde830f7cf6fa7fd26be105c9bdb4785             1549 Release
+ d4e1f3f2bd3b877678eecede2720d0030793c7d19965b48651af7df16d513c0a50c617bf78120af9cbeb921341f1c6505cf3dadf7b9af39a4f4be1b71ea6d070             1549 Release
  86dfde2be87de89819d2b739529217a66669164bfcb1a30dccb47c00da27bb6418f5f90541c08561ca78a94c8683e904702b9b86e1c222ae47e2c1fe13fa017f             1506 main/binary-i386/Packages
- 5418fbd89d70e24585c84339d182be70ef4481260787a0f342946a3710fd0fdc30356de3ae1eac0c4a9f3c1f4f85620be5963e3c7437ea58eecc0ffa3b1cb6f1              931 main/binary-i386/Packages.gz
+ 2d98f080b913ad6a423381a680f617f0812f00810a758c24bc6f546c97d6a074111d7b3e96e5e5500618456c652eba8f3df469a6fccb960e4a6f504355d88bef              931 main/binary-i386/Packages.gz
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEsXzkudRmZFj/+62ZwKCkQzM9wvYFAmsGzRkACgkQwKCkQzM9
-wvYw7A//ZDHnDXcqQTXjbu6iz7IzbKve/2Q4RCMeOqbJk7OuMYngcnoOIOiiyV0R
-jLnzp6s99iFzLfsHbEK8EN9+eqDKqkZmflg5FCukKDKV/RSFn+YyabndtrhZktcv
-a5B49RjeO2cTL0/Igr7bsVdTT0QJ/Lg5kOqOuy/U58pEJQbCub1LBwLnseQHTGz5
-Y+tFTMv0zKBYxu2BJA6poGbVXqT/uu3Smm7oNSjkfsulBTLAQbiA09kgH54MSWtF
-zbWDn/QQvp4BrJzOVnz9Xri8ilGsJ5gxtFPUJATXFG+9YeW1vDyR7SauXu0QGAaW
-ChW3vgO1nCCzcd+HUMHQgaByygKsBKxrN1Ag6HQXIH/k39+ybmhJ4XTIHFgdO4Rw
-n8FUu2GseKNF3mufIMAeVG958WuT6Ppd9dxJQH3sxtqacXQP3A8kmowV+8vPrpGm
-gB/U+Rvp8FUqkAEQrFtxCGazy6gfawmBgKdIjuVYRklqYY2dMr/Ea3Lhk/QtTKLB
-WgdSthyA630F4IrWdAl3Qy3UpDl8zfc0pAOz+jU9GIb8IK3cjY7NTWcwk8182gTQ
-yuNMJMgOq7OYTsXmmg4PGvXBxye3uRZlPwilHN28DT4k64z743IFHtMpIzXhDduI
-t5yiWC4Rq9cHivVRiB6SopBds2tzfB59/avvIYqhjME896IOtj4=
-=0Gu5
+iQIzBAEBCgAdFiEEsXzkudRmZFj/+62ZwKCkQzM9wvYFAmsG2oMACgkQwKCkQzM9
+wvbShg//U7xOUvEMviRtXl6n8xgfJdsAPZzxPG823yu9ArjvLo3S+uOqbXRfCMOV
+7YLSqetWb9IvHpx4xN7g1CQAbq3EDWTl910CB1ICI3unbcyhbOht149NFs5ejwWs
+qE56dr6F6hCVfMEI8X6wq8nz8Zr7Mo7ftPgLH2y8ERuqfA0RisA+DdIAjxPku7WW
+Ijt3EmDtby6yLcEGK7Ig5rqHp+JRpU129rdu3iknbM7qP/3H0evA2oYpN4bgcw12
+j3r1T53zCiPevdjEUhiATXSSiUxiatiiLJ81+XmFhokDOxZEJXggytBm0C/w2mql
+1SQ+d2LmGImt1gSnE5SDyUF8CzMIpRQvENrbFFfsL0zLU/su9rk4M/GRiIVebPCs
+OX4IjMIvEYofhfbZfIWA7sCvXJXuYhbWTFfpumMehbUkPLbRRe01v4okOM/zLPSl
+EKf8RiHQHd6StVTb26QB8NrPiQz7dGytR2e11/7xJugdyFIiIx73RXFI/LVWp7gu
+bAOWPp3bIvzwmWpQ6Ax087juoqOrcQ1fRQIcbH78spYE/Ysh3Dk94ebyFU7W8AYD
+KSkNnIeSRcrEXJZ5fgEpf6A+8cPUJTMIfhB1Zw4Lr89b+KL+r0JheYQWBBCReDbB
+WY7Dgbadlq7oUDwAhZ7nXRiyFDZbeDlWdk9ILXYEV1yNKcg3AjM=
+=H5aD
 -----END PGP SIGNATURE-----
