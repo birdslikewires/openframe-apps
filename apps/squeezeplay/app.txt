@@ -1,0 +1,7 @@
+# SqueezePlay, as the interface shows and runs it: JiveLite, the Squeezebox interface, and squeezelite, the player, started together by the launcher. It needs the network for Lyrion Music Server, and sound to play.
+name=SqueezePlay
+exec=/usr/lib/ofapp-squeezeplay/squeezeplay
+icon=music
+color=2f6db5
+display=x11
+allow=network sound

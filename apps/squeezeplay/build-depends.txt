@@ -1,0 +1,6 @@
+build-essential pkg-config
+# JiveLite: SDL 1.2 (sdl12-compat) and its add-ons, LuaJIT, and what the add-ons and Lua modules use
+libsdl1.2-compat-dev libsdl-image1.2-dev libsdl-ttf2.0-dev libsdl-gfx1.2-dev libluajit-5.1-dev
+libfreetype-dev libpng-dev libjpeg-dev libtiff-dev libwebp-dev zlib1g-dev libexpat1-dev
+# squeezelite: ALSA, and the formats it plays
+libasound2-dev libflac-dev libvorbis-dev libogg-dev libopusfile-dev libopus-dev libmad0-dev libmpg123-dev libfaad-dev libsoxr-dev libssl-dev

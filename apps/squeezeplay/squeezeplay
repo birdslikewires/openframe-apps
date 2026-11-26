@@ -1,0 +1,13 @@
+#!/bin/sh
+# SqueezePlay: squeezelite plays and JiveLite is the screen. They start together, and squeezelite stops when JiveLite does (its Quit, say); closing the app stops both.
+D=/usr/lib/ofapp-squeezeplay
+S="$HOME/.jivelite/userpath/settings"
+mkdir -p "$S"
+# The first time, straight to the skin made for 800x480 screens, in English, rather than JiveLite's welcome, which asks for a language and then offers every skin it has. Both can be changed in its Settings.
+[ -e "$S/SelectSkin.lua" ] || echo 'settings = {skin="JogglerSkin",}' > "$S/SelectSkin.lua"
+[ -e "$S/SetupLanguage.lua" ] || echo 'settings = {locale="EN",}' > "$S/SetupLanguage.lua"
+[ -e "$S/SetupWelcome.lua" ] || echo 'settings = {setupDone=true,}' > "$S/SetupWelcome.lua"
+# Named as the OpenFrame is, sharing its sound for JiveLite's visualisers (-v), and letting go of the sound card 5 seconds after it stops (-C 5), for anything else that wants it
+"$D/bin/squeezelite" -n "$(hostname)" -v -C 5 &
+trap 'kill $! 2>/dev/null' EXIT
+JIVE_NOCURSOR=1 "$D/bin/jivelite"

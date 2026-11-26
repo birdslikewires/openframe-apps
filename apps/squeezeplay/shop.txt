@@ -1,0 +1,13 @@
+summary=Music from Lyrion Music Server, and a touch screen to control it.
+author=Logitech, Adrian Smith, Ralph Irving and contributors
+licence=BSD-3-Clause, GPL-3.0-or-later
+source=https://github.com/ralph-irving/jivelite
+community=https://forums.lyrion.org/
+
+SqueezePlay makes your OpenFrame a Squeezebox again. It plays music from your own library and internet radio, and its touch screen chooses what plays, here or on any other player in the house.
+
+It needs Lyrion Music Server, which used to be Logitech Media Server, running on a computer or NAS on your network. SqueezePlay finds it by itself. Lyrion is free, from lyrion.org.
+
+This is JiveLite, the interface Squeezebox Touch and Radio owners will recognise, with the skin made for the Joggler's 800x480 screen, and squeezelite as the player. The music keeps playing when you go back to the home screen, and stops when you close SqueezePlay.
+
+The OpenFrame's own volume sets the most SqueezePlay can play at, and SqueezePlay's volume works within it. If you use a USB DAC in direct mode and want the music exactly as it is, set the player's volume to stay at 100% in Lyrion's player settings, under Audio.

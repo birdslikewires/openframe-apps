@@ -56,6 +56,8 @@ if [ -n "$elfs" ]; then
 	arch=i386
 	mkdir -p "$WORK/shlibs/debian"
 	printf 'Source: %s\n\nPackage: %s\nArchitecture: i386\n' "$PKG" "$PKG" > "$WORK/shlibs/debian/control"
+	# SDL 1.2 (sdl12-compat) and SDL2 come with the interface, built without Mesa, and every app is given them (openframe-sprite's /opt/sprite/lib). Debian's packages of them bring Mesa, so a program linked against them depends on no package for them.
+	printf 'libSDL-1.2 0\nlibSDL2-2.0 0\n' > "$WORK/shlibs/debian/shlibs.local"
 	# shellcheck disable=SC2086
 	deps=$(cd "$WORK/shlibs" && dpkg-shlibdeps -O -l"$DESTDIR$APPDIR" $elfs 2>/dev/null | sed -n 's/^shlibs:Depends=//p')
 fi

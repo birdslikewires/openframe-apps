@@ -1,0 +1,22 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: SqueezePlay (JiveLite and squeezelite)
+Source: https://github.com/ralph-irving/jivelite
+ https://github.com/ralph-irving/squeezelite
+
+Files: usr/lib/ofapp-squeezeplay/bin/jivelite usr/lib/ofapp-squeezeplay/lib/* usr/share/ofapp-squeezeplay/*
+Copyright: 2010 Logitech, Inc.
+           2013-2014 Adrian Smith
+           Ralph Irving and the JiveLite contributors
+License: BSD-3-Clause
+Comment: JiveLite, the interface, with its Lua modules (lua-cjson, LuaExpat, LuaFileSystem, LuaSocket, md5 and zipfilter, each under its own MIT-style terms in its source) and skins, among them the Joggler skin (800x480) by Andy Davison. Built into it are SDL_ttf, SDL_image and SDL_gfx (zlib licence), from Debian. Its full licence follows.
+
+Files: usr/lib/ofapp-squeezeplay/bin/squeezelite
+Copyright: 2012-2015 Adrian Smith
+           2015-2026 Ralph Irving
+License: GPL-3.0-or-later
+Comment: squeezelite, the player. Its full licence, with its additional permission for OpenSSL, follows. The source of both, as built, is published beside the package, at https://apps.openbeak.net/source/ofapp-squeezeplay/<version>/
+
+Files: usr/lib/ofapp-squeezeplay/squeezeplay recipe/*
+Copyright: 2026 Andrew Davison
+License: GPL-3.0-or-later
+Comment: The launcher, recipe and manifest, from https://github.com/birdslikewires/openframe-apps

@@ -29,7 +29,7 @@ allow=network
 - `name` goes on its tile, and can be up to 40 characters.
 - `exec` is what to run, either a program in the package (in `/usr/lib/ofapp-<id>/`) or one from a Debian package listed in `depends.txt`.
 - `icon` is one of the interface's glyphs, listed in its [src/icons.txt](https://github.com/birdslikewires/openframe-sprite/blob/main/src/icons.txt), or up to two letters. `color` is the tile's colour, as `RRGGBB`.
-- `display=x11` is for an X11 or SDL program, which runs through Xwayland. Otherwise the app is expected to use Wayland.
+- `display=x11` is for an X11 or SDL program, which runs through Xwayland. Otherwise the app is expected to use Wayland. An SDL program links against the SDL the interface brings (SDL 1.2 through sdl12-compat, or SDL2), which is built without Mesa, so the package doesn't depend on Debian's, which brings Mesa with it. [squeezeplay](squeezeplay/) builds SDL's add-on libraries into its program, from Debian's static ones, for the same reason.
 - `kind=screensaver` makes it a screensaver, which has no tile and is chosen in Settings under Display.
 - `allow` lists what it may reach beyond the screen, from `network`, `sound` (to play) and `microphone` (to record as well). It gets none of these unless it asks.
 - `handle` (`normal`, `faint` or `hidden`) and `bar=yes` set how the home handle and the status bar show over it.
@@ -76,7 +76,7 @@ Fetch a release rather than a branch, and check it against its SHA-256 in `build
 
 ## update.sh
 
-An app built from someone else's releases can keep itself current. `update.sh` prints the newest release's version and the SHA-256 of what `build.sh` fetches, as `<version> <sha256>`, and runs in a throwaway container with `curl` and `jq`. Every 6 hours, `upstream.yml` runs it, and when the release is newer than `shop.txt`'s `version`, it updates that and the `SHA256=` line in `build.sh` (which must have exactly one), commits the change and publishes it to testing. From there it needs an ok on the testing issue, like any other change. Ignore betas and pre-releases, so owners only get stable versions.
+An app built from someone else's releases can keep itself current. `update.sh` prints the newest release's version and the SHA-256 of what `build.sh` fetches, as `<version> <sha256>`, and runs in a throwaway container with `curl`, `git` and `jq`. Every 6 hours, `upstream.yml` runs it, and when the release is newer than `shop.txt`'s `version`, it updates that and the `SHA256=` line in `build.sh` (which must have exactly one), commits the change and publishes it to testing. From there it needs an ok on the testing issue, like any other change. Ignore betas and pre-releases, so owners only get stable versions.
 
 The app's own updater, if it has one, should be left out of the build, as an app can't write over its own files.
 
@@ -87,4 +87,4 @@ Before it's published, `ci/check-app.sh` and `ci/test-app.sh` make sure that
 - it holds files only, with no maintainer scripts, triggers or conffiles, and no relations to other packages beyond its dependencies
 - its files are only in `/usr/lib/ofapp-<id>/`, `/usr/share/ofapp-<id>/`, `/usr/share/doc/ofapp-<id>/` and its manifest, as plain files, folders and symlinks that stay inside them, with nothing setuid and nothing anyone else can write
 - its manifest is one the interface reads, with a glyph it has, asking for nothing beyond network, sound and microphone
-- it installs on a clean Trixie with only Debian's packages, pulls in no Mesa, has i386 programs, has what `exec` runs, passes its own `test.sh`, and leaves nothing behind when it's removed
+- it installs on a clean Trixie with only Debian's packages, pulls in no Mesa, has i386 programs with every library they link against (but the interface's SDL), has what `exec` runs, passes its own `test.sh`, and leaves nothing behind when it's removed

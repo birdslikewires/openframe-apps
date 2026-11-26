@@ -20,6 +20,7 @@ By pull request, adding a folder to `apps/` ([apps/README.md](apps/README.md) sa
 ## The apps
 
 - [HamClock](apps/hamclock/): amateur radio clock and propagation maps.
+- [SqueezePlay](apps/squeezeplay/): music from Lyrion Music Server, with JiveLite and squeezelite.
 
 ## Licence
 
