@@ -1,14 +1,14 @@
 Package: ofapp-hamclock
-Version: 4.33-26.11.3
+Version: 4.33-26.11.4
 Architecture: i386
 Maintainer: OpenFrame Project <noreply@openbeak.net>
 Installed-Size: 2167
 Depends: libc6 (>= 2.38), libgcc-s1 (>= 4.2), libstdc++6 (>= 11), libx11-6
-Filename: pool/trixie-testing/ofapp-hamclock_4.33-26.11.3_i386.deb
-Size: 762204
-MD5sum: e29732006ad9524ad6fb01a9fa0677db
-SHA1: 08d8b1be7ef5f9bfd39edfaaf837540e6e2a4e1b
-SHA256: 3a31930a0a9dd3650312f9acbb88b9b997d8bb49d0ecf10e552dbfd888585ea3
+Filename: pool/trixie-testing/ofapp-hamclock_4.33-26.11.4_i386.deb
+Size: 762188
+MD5sum: fd44f0b01447bff4ddfe53f215454fba
+SHA1: 127f2901c18ac5cdfb31af32723547c291d00cde
+SHA256: 1bd58b4e3f1ab514750d635c75154068c1cbbcc164eee6c2061eebc274738a70
 Section: misc
 Priority: optional
 Homepage: https://github.com/openhamclock/hamclock
