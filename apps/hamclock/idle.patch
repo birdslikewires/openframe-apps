@@ -1,0 +1,22 @@
+--- a/ESPHamClock/ArduinoLib/Arduino.cpp
++++ b/ESPHamClock/ArduinoLib/Arduino.cpp
+@@ -19,6 +19,8 @@
+ static float max_cpu_usage = DEF_CPU_USAGE;
+ // even at 100% throttle, don't busy-spin the host when loop() has nothing to do
+ #define DEF_MIN_IDLE_LOOP_US 1000
++#define IDLE_REST_US 20000              // OpenFrame: the rest after a pass that found nothing to do (-t 100)
++extern bool mapSweepActive (void);      // earthmap.cpp
+ 
+ char **our_argv;                // our argv for restarting
+ std::string our_dir;            // our storage directory, including trailing /
+@@ -750,8 +752,9 @@
+             struct timeval tv1;
+             gettimeofday (&tv1, NULL);
+             int loop_us = TVUSEC(tv0, tv1);
++            // OpenFrame: a quick pass found nothing to do, so rest IDLE_REST_US rather than polling hundreds of times a second, unless the map is mid-sweep, which draws one row a pass and should finish promptly
+             if (loop_us < DEF_MIN_IDLE_LOOP_US)
+-                usleep (DEF_MIN_IDLE_LOOP_US - loop_us);
++                usleep (mapSweepActive() ? DEF_MIN_IDLE_LOOP_US - loop_us : IDLE_REST_US);
+         }
+ 
+     } else {
