@@ -34,3 +34,16 @@
          else
              delay (WD_DELAY_DT);
      }
+--- a/ESPHamClock/ArduinoLib/Adafruit_RA8875.cpp
++++ b/ESPHamClock/ArduinoLib/Adafruit_RA8875.cpp
+@@ -1876,8 +1876,9 @@
+         // set flag to inform the drawing thread to draw the pr region, wait until finished.
+         // if you know of a better way with mutexes etc let me know
+         pr_draw = true;
++        // OpenFrame: check every 10 ms, not every 1 ms: the drawing thread only looks every REFRESH_US (50 ms), and waitForUser() calls this on every pass over the map, which made hundreds of wake-ups a second in setup and menus
+         while (pr_draw)
+-            usleep (1000);
++            usleep (10000);
+ }
+ 
+ 
