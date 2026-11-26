@@ -1,0 +1,29 @@
+Package: ofapp-hamclock
+Version: 4.33-26.11.3
+Architecture: i386
+Maintainer: OpenFrame Project <noreply@openbeak.net>
+Installed-Size: 2167
+Depends: libc6 (>= 2.38), libgcc-s1 (>= 4.2), libstdc++6 (>= 11), libx11-6
+Filename: pool/trixie-testing/ofapp-hamclock_4.33-26.11.3_i386.deb
+Size: 762204
+MD5sum: e29732006ad9524ad6fb01a9fa0677db
+SHA1: 08d8b1be7ef5f9bfd39edfaaf837540e6e2a4e1b
+SHA256: 3a31930a0a9dd3650312f9acbb88b9b997d8bb49d0ecf10e552dbfd888585ea3
+Section: misc
+Priority: optional
+Homepage: https://github.com/openhamclock/hamclock
+Description: Live world map, space weather, and DX dashboard for amateur radio operators.
+ HamClock displays what the sun and the ionosphere are doing to radio, with solar flux, sunspots, the K index and band conditions, and DX spots if you'd like them.
+ .
+ The first time it starts, HamClock asks a few questions to set itself up. Its keyboard types the upper character when you tap the top half of a key, and the lower one from the bottom half, so a USB keyboard makes this easier.
+ .
+ Alternatively, while it's running you can interact with HamClock in a browser on another computer. Visit your OpenFrame's network address with ":8081/live.html" on the end, such as "http://192.168.1.20:8081/live.html".
+X-Sprite-Allow: network
+X-Sprite-Author: Elwood Downey and the openhamclock contributors
+X-Sprite-Color: b8860b
+X-Sprite-Community: https://discord.gg/wb8ATjVn6M
+X-Sprite-Icon: radio
+X-Sprite-Kind: app
+X-Sprite-Licence: MIT
+X-Sprite-Name: HamClock
+
