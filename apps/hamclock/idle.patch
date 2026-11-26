@@ -20,3 +20,17 @@
          }
  
      } else {
+--- a/ESPHamClock/ESPHamClock.cpp
++++ b/ESPHamClock/ESPHamClock.cpp
+@@ -2398,8 +2398,9 @@
+     int dt;
+     while ((dt = millis() - t0) < ms) {
+         checkWebServer(true);
+-        if (dt < WD_DELAY_DT)
+-            delay (dt);
++        // OpenFrame: sleep for what's left (at most WD_DELAY_DT), not for what has passed, which began with delay(0) and spun hundreds of times a second in every wait for a tap
++        if (ms - dt < WD_DELAY_DT)
++            delay (ms - dt);
+         else
+             delay (WD_DELAY_DT);
+     }
