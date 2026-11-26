@@ -1,14 +1,14 @@
 Package: ofapp-hamclock
-Version: 4.33-26.11.5
+Version: 4.33-26.11.7
 Architecture: i386
 Maintainer: OpenFrame Project <noreply@openbeak.net>
 Installed-Size: 2167
 Depends: libc6 (>= 2.38), libgcc-s1 (>= 4.2), libstdc++6 (>= 11), libx11-6
-Filename: pool/trixie/ofapp-hamclock_4.33-26.11.5_i386.deb
-Size: 762144
-MD5sum: 82bce574b64f89ebf1dc5b524f13fcc5
-SHA1: 8e3101fece7220a5500297a1d64effba568f7269
-SHA256: 6444478f80254e560fc26823cb2157e58efb493ed50eac215db7e0c05da425dd
+Filename: pool/trixie/ofapp-hamclock_4.33-26.11.7_i386.deb
+Size: 762172
+MD5sum: 54c625f76dbd1498d9e210f3a20533a4
+SHA1: 6c01dfcfa638ab0d874fe6462c2066f27325a2bc
+SHA256: 9a02eaf4711fc9776eb21b05c3fe0cd1a48651e52e9e8bf95fc4643ad78c0587
 Section: misc
 Priority: optional
 Homepage: https://github.com/openhamclock/hamclock
@@ -26,4 +26,35 @@ X-Sprite-Icon: radio
 X-Sprite-Kind: app
 X-Sprite-Licence: MIT
 X-Sprite-Name: HamClock
+
+Package: ofapp-squeezeplay
+Version: 26.11.2
+Architecture: i386
+Maintainer: OpenFrame Project <noreply@openbeak.net>
+Installed-Size: 20729
+Depends: libasound2t64 (>= 1.0.16), libc6 (>= 2.38), libexpat1 (>= 2.0.1), libfaad2 (>= 2.7), libflac14 (>= 1.5.0), libfreetype6 (>= 2.2.1), libjpeg62-turbo (>= 1.3.1), libluajit-5.1-2 (>= 2.0.4) | libluajit-5.1-2 (>= 2.1.0+openresty), libmad0 (>= 0.15.1b-3), libmpg123-0t64 (>= 1.26.0), libopusfile0 (>= 0.5), libpng16-16t64 (>= 1.6.46), libsoxr0 (>= 0.1.0), libssl3t64 (>= 3.0.0), libtiff6 (>= 4.0.3), libvorbisfile3 (>= 1.1.2), libwebp7 (>= 1.5.0), zlib1g (>= 1:1.1.4)
+Filename: pool/trixie/ofapp-squeezeplay_26.11.2_i386.deb
+Size: 14115120
+MD5sum: 0a651076df74588916ff6dbc18fc39cc
+SHA1: c4a68d2b9f0b7ba71d7a9a233ca26611355f66ae
+SHA256: f11f2a35cda7175fc3b12f35f714c245fe36e81e1710308ca2b980a5ce0d80ff
+Section: misc
+Priority: optional
+Homepage: https://github.com/ralph-irving/jivelite
+Description: Music from Lyrion Music Server, and a touch screen to control it.
+ SqueezePlay makes your OpenFrame a Squeezebox again. It plays music from your own library and internet radio, and its touch screen chooses what plays, here or on any other player in the house.
+ .
+ It needs Lyrion Music Server, which used to be Logitech Media Server, running on a computer or NAS on your network. SqueezePlay finds it by itself. Lyrion is free, from lyrion.org.
+ .
+ This is JiveLite, the interface Squeezebox Touch and Radio owners will recognise, with the skin made for the Joggler's 800x480 screen, and squeezelite as the player. The music keeps playing when you go back to the home screen, and stops when you close SqueezePlay.
+ .
+ The OpenFrame's own volume sets the most SqueezePlay can play at, and SqueezePlay's volume works within it. If you use a USB DAC in direct mode and want the music exactly as it is, set the player's volume to stay at 100% in Lyrion's player settings, under Audio.
+X-Sprite-Allow: network sound
+X-Sprite-Author: Logitech, Adrian Smith, Ralph Irving and contributors
+X-Sprite-Color: 2f6db5
+X-Sprite-Community: https://forums.lyrion.org/
+X-Sprite-Icon: music
+X-Sprite-Kind: app
+X-Sprite-Licence: BSD-3-Clause, GPL-3.0-or-later
+X-Sprite-Name: SqueezePlay
 
