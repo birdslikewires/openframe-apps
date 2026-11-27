@@ -1,14 +1,14 @@
 Package: ofapp-hamclock
-Version: 4.33-26.11.7
+Version: 4.33-26.11.8
 Architecture: i386
 Maintainer: OpenFrame Project <noreply@openbeak.net>
 Installed-Size: 2167
 Depends: libc6 (>= 2.38), libgcc-s1 (>= 4.2), libstdc++6 (>= 11), libx11-6
-Filename: pool/trixie/ofapp-hamclock_4.33-26.11.7_i386.deb
-Size: 762172
-MD5sum: 54c625f76dbd1498d9e210f3a20533a4
-SHA1: 6c01dfcfa638ab0d874fe6462c2066f27325a2bc
-SHA256: 9a02eaf4711fc9776eb21b05c3fe0cd1a48651e52e9e8bf95fc4643ad78c0587
+Filename: pool/trixie/ofapp-hamclock_4.33-26.11.8_i386.deb
+Size: 762232
+MD5sum: d50aa38c0ab9aa54037fb9dfe97efb65
+SHA1: 1aaf40f3d0a6e1597a97155f1dc4306045a98057
+SHA256: 716006b40823ca6632d73d6d6f560bcf6364a0ee95e92dcc969f3ec44a05cae1
 Section: misc
 Priority: optional
 Homepage: https://github.com/openhamclock/hamclock
@@ -22,7 +22,7 @@ X-Sprite-Allow: network
 X-Sprite-Author: Elwood Downey and the openhamclock contributors
 X-Sprite-Color: b8860b
 X-Sprite-Community: https://discord.gg/wb8ATjVn6M
-X-Sprite-Icon: radio
+X-Sprite-Icon: radio-tower
 X-Sprite-Kind: app
 X-Sprite-Licence: MIT
 X-Sprite-Name: HamClock
