@@ -56,6 +56,7 @@ HamClock shows the time where you are and in UTC, ...
 - `version` is the version of what it's built from, if it has one. The package's version is that followed by `-<year.month.N>`, where N counts the commits to the recipe that month.
 - `author` and `licence` say who made it and on what terms.
 - `source` is where its source code lives.
+- `changes`, for an app that follows upstream's releases (`update.sh`), is where to see what changed between two of them, with `{old}` and `{new}` for their versions, such as `https://github.com/openhamclock/hamclock/compare/v{old}.0...v{new}.0`. The testing issue links to it when the version waiting differs from the one released, so an ok isn't given blind.
 - `community` is where people can ask about the app and get help with it, as an `https://` address, and is required. We only bring apps to the OpenFrame and don't support them ourselves, so this should be the place the app's own makers and users answer questions, such as a forum, a chat server or the project's issues.
 
 ## build.sh
@@ -85,7 +86,7 @@ The app's own updater, if it has one, should be left out of the build, as an app
 
 Before it's published, `ci/check-app.sh` and `ci/test-app.sh` make sure that
 
-- it holds files only, with no maintainer scripts, triggers or conffiles, and no relations to other packages beyond its dependencies
-- its files are only in `/usr/lib/ofapp-<id>/`, `/usr/share/ofapp-<id>/`, `/usr/share/doc/ofapp-<id>/` and its manifest, as plain files, folders and symlinks that stay inside them, with nothing setuid and nothing anyone else can write
-- its manifest is one the interface reads, with a glyph it has, asking for nothing beyond network, sound and microphone
+- it holds files only, with no maintainer scripts, triggers or conffiles, no relations to other packages beyond its dependencies (packages by name), and the version CI meant it to have, newer than any published
+- its files are only in `/usr/lib/ofapp-<id>/`, `/usr/share/ofapp-<id>/`, `/usr/share/doc/ofapp-<id>/` and its manifest, as plain files, folders and symlinks that stay inside them (followed as installed, and never by way of another of its symlinks), with nothing setuid and nothing anyone else can write
+- its manifest is one the interface reads, with a glyph it has, asking for nothing beyond network, sound, microphone and music, as the Shop shows it
 - it installs on a clean Trixie with only Debian's packages, pulls in no Mesa, has i386 programs with every library they link against (but the interface's SDL), has what `exec` runs, passes its own `test.sh`, and leaves nothing behind when it's removed

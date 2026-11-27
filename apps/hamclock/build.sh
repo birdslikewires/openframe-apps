@@ -19,5 +19,5 @@ strip --strip-unneeded "$DESTDIR$APPDIR/hamclock"
 	printf '\nLicense: GPL-3.0-or-later\n On Debian systems, the full text is in /usr/share/common-licenses/GPL-3.\n'
 } > "$DESTDIR$DOCDIR/copyright"
 install -m 644 ESPHamClock/wsServer/LICENSE "$DESTDIR$DOCDIR/wsServer-LICENSE"
-# wsServer is GPL-3.0, so the source goes with it
-cp "$ZIP" "$SOURCES/"
+# wsServer is GPL-3.0, so the source goes with it, and the patch it's built with
+cp "$ZIP" "$RECIPE/idle.patch" "$SOURCES/"

@@ -51,16 +51,21 @@ jobs:
         run: |
           bash ci/build-apps.sh out
           if [ -s out/built.txt ]; then echo "built=yes" >> "$GITHUB_OUTPUT"; else echo "built=no" >> "$GITHUB_OUTPUT"; fi
+          # only what built.txt lists goes on to publish: each app's checked package, and its source
+          mkdir pub
+          cp out/built.txt pub/
+          while read -r id deb; do
+            mkdir -p "pub/$id"
+            cp -- "out/$deb" "pub/$deb"
+            if [ -d "out/$id/source-ofapp-$id" ]; then cp -r -- "out/$id/source-ofapp-$id" "pub/$id/"; fi
+          done < out/built.txt
 
       - name: Keep the packages for publishing
         if: steps.build.outputs.built == 'yes'
         uses: actions/upload-artifact@v7
         with:
           name: apps
-          path: |
-            out/built.txt
-            out/*/ofapp-*.deb
-            out/*/source-ofapp-*/
+          path: pub/
           retention-days: 7
 
   publish:
@@ -69,6 +74,7 @@ jobs:
     permissions:
       contents: write
       issues: write   # the testing issue (ci/testing-issue.sh)
+      actions: read   # whether this put aside an ok waiting to promote
 
     steps:
       - name: Checkout
@@ -122,12 +128,14 @@ jobs:
         run: |
           export SIGN_ARGS="--local-user ${GPG_KEY_ID}!"
           if [ -s out/built.txt ]; then
-            # only what's listed, the packages the build job made, each an ofapp-*
-            debs=$(cut -d' ' -f2 out/built.txt | sed 's|^|out/|')
-            for d in $debs; do
-              case "$(dpkg-deb -f "$d" Package)" in ofapp-*) ;; *) echo "$d isn't an app"; exit 1 ;; esac
-            done
-            bash ci/apt-suite.sh add trixie-testing $debs
+            # only what's listed, the packages the build job made and checked, each ofapp-<id> in <id>/, a line each
+            debs=()
+            while read -r id deb; do
+              [[ "$id" =~ ^[a-z0-9][a-z0-9-]{0,39}$ && "$deb" =~ ^$id/ofapp-${id}_[A-Za-z0-9.+~-]+_(i386|all)\.deb$ ]] || { echo "built.txt: an odd line, $id $deb"; exit 1; }
+              [ "$(dpkg-deb -f "out/$deb" Package)" = "ofapp-$id" ] || { echo "$deb isn't ofapp-$id"; exit 1; }
+              debs+=("out/$deb")
+            done < out/built.txt
+            bash ci/apt-suite.sh add trixie-testing "${debs[@]}"
             bash ci/sources.sh add out
           else
             bash ci/apt-suite.sh index trixie-testing
@@ -155,4 +163,29 @@ jobs:
         run: |
           list=$(while read -r id deb; do echo "$(dpkg-deb -f "out/$deb" Package) $(dpkg-deb -f "out/$deb" Version)"; done < out/built.txt |
             paste -sd, - | sed 's/,/, /g')
-          bash ci/testing-issue.sh "In testing: ${list} (${GITHUB_SHA::7})."
+          # and, for an app from upstream's releases, what changed upstream since the release OpenFrames have (shop.txt's changes=)
+          links=$(while read -r id deb; do
+            new=$(sed -n 's/^version=//p' "apps/$id/shop.txt" | tail -1 | tr -d '[:space:]')
+            url=$(sed -n 's/^changes=//p' "apps/$id/shop.txt" | tail -1 | tr -d '[:space:]')
+            rel=$(ls apt-repo/pool/trixie/ofapp-"${id}"_*.deb 2>/dev/null | head -1)
+            [ -n "$new" ] && [ -n "$url" ] && [ -n "$rel" ] || continue
+            old=${rel##*/}; old=${old#ofapp-"${id}"_}; old=${old%_*}; old=${old%-*}
+            [ "$old" != "$new" ] || continue
+            [[ "$url" =~ ^https://[^[:space:]]+$ ]] || continue
+            echo "What changed in $(sed -n 's/^name=//p' "apps/$id/app.txt" | tail -1) from $old to $new: $(sed "s/{old}/$old/g; s/{new}/$new/g" <<< "$url")"
+          done < out/built.txt)
+          bash ci/testing-issue.sh "In testing: ${list} (${GITHUB_SHA::7}).${links:+$'\n\n'${links}}"
+
+      # GitHub keeps one run waiting in a concurrency group, and cancels the one already waiting there: an ok that was waiting behind a build when this one arrived was cancelled, so the issue says so.
+      - name: Say if an ok was displaced
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          t=$(date -u -d "$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" -q .created_at)" +%s)
+          since=$(date -u -d "@$((t - 120))" +%Y-%m-%dT%H:%M:%SZ)
+          n=$(gh run list -R "${GITHUB_REPOSITORY}" --workflow promote.yml --event issue_comment --status cancelled -L 20 --json updatedAt -q "[.[] | select(.updatedAt >= \"${since}\")] | length")
+          num=$(gh issue list -R "${GITHUB_REPOSITORY}" --label testing --state open --json number -q '.[0].number')
+          if [ "${n:-0}" -gt 0 ] && [ -n "$num" ]; then
+            gh issue comment "$num" -R "${GITHUB_REPOSITORY}" --body "A reply here was put aside by this build, as GitHub keeps only one run waiting at a time. If it was ok or no, reply again." >/dev/null
+          fi

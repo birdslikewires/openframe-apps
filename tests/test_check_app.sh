@@ -24,6 +24,7 @@ Maintainer: OpenFrame Project <noreply@openbeak.net>
 Description: A demo
 X-Sprite-Name: Demo
 X-Sprite-Kind: app
+X-Sprite-Allow: network
 X-Sprite-Community: https://example.org/demo
 EOF
 touch "$W/pkg/DEBIAN/md5sums"
@@ -89,6 +90,16 @@ case_ "no exec=" fail 'sed -i /^exec=/d usr/share/sprite/apps/demo.app'
 case_ "a name not the Shop's" fail 'sed -i s/X-Sprite-Name:.*/X-Sprite-Name:\ Other/ DEBIAN/control'
 case_ "a kind not the Shop's" fail 'echo kind=screensaver >> usr/share/sprite/apps/demo.app'
 case_ "a colour that isn't one" fail 'sed -i s/color=2a6f97/color=blue/ usr/share/sprite/apps/demo.app'
+case_ "a symlink by way of another" fail 'mkdir -p usr/lib/ofapp-demo/d1/d2/d3/d4 && ln -s /usr/lib/ofapp-demo usr/lib/ofapp-demo/d1/d2/d3/d4/b && ln -s d1/d2/d3/d4/b/../../../../etc usr/lib/ofapp-demo/a'
+case_ "a symlink to a symlink" pass 'ln -s run usr/lib/ofapp-demo/run2 && ln -s run2 usr/lib/ofapp-demo/run3'
+case_ "a service" pass 'printf "kind=service\nweb=9000\nmemory=320\n" >> usr/share/sprite/apps/demo.app; sed -i s/X-Sprite-Kind:.app/X-Sprite-Kind:\ service/ DEBIAN/control'
+case_ "web= for an app" fail 'echo web=9000 >> usr/share/sprite/apps/demo.app'
+case_ "memory= past 320" fail 'printf "kind=service\nmemory=512\n" >> usr/share/sprite/apps/demo.app; sed -i s/X-Sprite-Kind:.app/X-Sprite-Kind:\ service/ DEBIAN/control'
+case_ "allow=music" pass 'sed -i "s/allow=network/allow=network music/" usr/share/sprite/apps/demo.app; sed -i "s/X-Sprite-Allow:.*/X-Sprite-Allow: network music/" DEBIAN/control'
+case_ "an Allow not the manifest's" fail 'sed -i "s/X-Sprite-Allow:.*/X-Sprite-Allow: sound/" DEBIAN/control'
+case_ "Depends on packages" pass 'echo "Depends: libc6 (>= 2.38), perl, zlib1g (>= 1:1.1.4) | libz-dev" >> DEBIAN/control'
+case_ "an odd Depends" fail 'echo "Depends: libc6:amd64" >> DEBIAN/control'
+case_ "a manifest line past 500" fail 'printf "#%0600d\nbuiltin=settings\n" 0 >> usr/share/sprite/apps/demo.app'
 
 echo
 [ "$FAILS" -eq 0 ] && echo "All passed." || { echo "$FAILS failed."; exit 1; }

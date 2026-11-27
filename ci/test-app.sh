@@ -2,6 +2,7 @@
 # ci/test-app.sh <deb> <id> [<recipe>]: installs an app's package on a clean i386 Debian Trixie (as root in a throwaway container, which ci/build-apps.sh starts), with only Debian's own suites, as an OpenFrame would take its dependencies, and checks
 #   - apt finds everything it needs in Debian (an app can't need a package of ours)
 #   - nothing it pulls in is Mesa (the OpenFrame has no use for it, and it's hundreds of MB)
+#   - its symlinks, as installed, lead only into its own places (check-app.sh reads them as text; this follows them)
 #   - its programs are i386, as the OpenFrame is, and have every library they link against, but the SDL the interface brings
 #   - what its manifest's exec= runs is there, and can be run
 #   - the recipe's own test.sh passes, if it has one (run with PKG, ID and VERSION set)
@@ -20,6 +21,15 @@ added=$(comm -13 <(echo "$before") <(dpkg-query -W -f '${Package}\n' | sort) | g
 echo "$PKG installs, bringing $(echo "$added" | grep -c . || true) package(s) with it"
 mesa=$(echo "$added" | grep -E '^(libgbm1|mesa-.*|libllvm.*|libgl1|libgl1-.*|libegl1|libegl-mesa0|libglx-mesa0|libgles2)$' || true)
 [ -z "$mesa" ] || { echo "$PKG pulls in Mesa: $(echo $mesa)"; exit 1; }
+
+for f in $(dpkg -L "$PKG"); do
+	[ -L "$f" ] || continue
+	r=$(realpath -m -- "$f")
+	case "$r" in
+		/usr/lib/$PKG|/usr/lib/$PKG/*|/usr/share/$PKG|/usr/share/$PKG/*|/usr/share/doc/$PKG|/usr/share/doc/$PKG/*) ;;
+		*) echo "$f leads out of the app's places, to $r"; exit 1 ;;
+	esac
+done
 
 for f in $(dpkg -L "$PKG"); do
 	[ -f "$f" ] && [ ! -L "$f" ] || continue

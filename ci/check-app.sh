@@ -1,13 +1,13 @@
 #!/bin/bash
-# ci/check-app.sh <deb> <id> <icons.txt>: checks an app's package, as built, can do no more than an app should, whatever its recipe did. Needs dpkg-deb; doesn't install it (ci/test-app.sh does that). <icons.txt> is the interface's list of tile glyphs (openframe-sprite's src/icons.txt). Prints each problem and exits 1 if there are any.
+# ci/check-app.sh <deb> <id> <icons.txt> [<version>]: checks an app's package, as built, can do no more than an app should, whatever its recipe did. Needs dpkg-deb; doesn't install it (ci/test-app.sh does that). <icons.txt> is the interface's list of tile glyphs (openframe-sprite's src/icons.txt), and <version> the version ci/build-apps.sh meant it to have. Prints each problem and exits 1 if there are any.
 #
 #   - files only, with no maintainer scripts, triggers or conffiles (control and md5sums only)
-#   - only the control fields ci/build-app.sh writes, so no Pre-Depends, Conflicts, Breaks, Replaces, Provides, Essential and so on
+#   - only the control fields ci/build-app.sh writes, so no Pre-Depends, Conflicts, Breaks, Replaces, Provides, Essential and so on, and Depends only packages by name (and version)
 #   - files only in the app's own places, /usr/lib/ofapp-<id>/, /usr/share/ofapp-<id>/, /usr/share/doc/ofapp-<id>/ and its manifest, /usr/share/sprite/apps/<id>.app
-#   - only plain files, folders and symlinks that stay in those places; all root's, nothing setuid, setgid or sticky, nothing anyone else can write; plain names
-#   - its manifest one the interface reads, with no builtin=, a glyph the interface has, and only network, sound and microphone to ask for
+#   - only plain files, folders and symlinks that stay in those places (never by way of another of its symlinks); all root's, nothing setuid, setgid or sticky, nothing anyone else can write; plain names
+#   - its manifest one the interface reads, with no builtin=, a glyph the interface has, and only network, sound, microphone and music to ask for (what the Shop shows, X-Sprite-Allow, the same)
 set -uo pipefail
-DEB=$1 ID=$2 ICONS=$3
+DEB=$1 ID=$2 ICONS=$3 VERSION=${4:-}
 PKG=ofapp-$ID
 FAILS=0
 bad() { echo "$PKG: $*"; FAILS=$((FAILS + 1)); }
@@ -29,6 +29,19 @@ for f in $fields; do
 done
 [ "$(dpkg-deb -f "$DEB" Package)" = "$PKG" ] || bad "Package is $(dpkg-deb -f "$DEB" Package), not $PKG"
 case "$(dpkg-deb -f "$DEB" Architecture)" in i386|all) ;; *) bad "Architecture isn't i386 or all" ;; esac
+[ -z "$VERSION" ] || [ "$(dpkg-deb -f "$DEB" Version)" = "$VERSION" ] || bad "Version is $(dpkg-deb -f "$DEB" Version), not $VERSION"
+# Depends: packages by name, each perhaps with a version, or alternatives of them (whatever they are is Debian's, which test-app.sh installs from)
+deps=$(dpkg-deb -f "$DEB" Depends | tr '\n' ' ')
+if [ -n "${deps// }" ]; then
+	IFS=, read -ra items <<< "$deps"
+	for it in "${items[@]}"; do
+		IFS='|' read -ra alts <<< "$it"
+		for a in "${alts[@]}"; do
+			a=$(sed 's/^[[:space:]]*//; s/[[:space:]]*$//' <<< "$a")
+			[[ "$a" =~ ^[a-z0-9][a-z0-9+.-]+(:any)?( \((<<|<=|=|>=|>>) [A-Za-z0-9.+~:-]+\))?$ ]] || bad "Depends: $a isn't a package's name (and version)"
+		done
+	done
+fi
 [[ "$(dpkg-deb -f "$DEB" X-Sprite-Community)" =~ ^https://[^[:space:]]+$ ]] || bad "X-Sprite-Community, where to ask about the app, isn't an https:// address"
 
 # Its files, from tar's listing with numeric owners. An odd name (a space, a quote) comes quoted, so the check on names below refuses it, and anything after a name but a symlink's target is refused.
@@ -41,6 +54,12 @@ ok_place() {   # a path (no leading ./ or /) in the app's own places
 	esac
 	return 1
 }
+# its symlinks, by name, so a symlink's target can't go by way of another of them (which the text of the target doesn't show: a/../.. through a link a goes wherever a does)
+declare -A LINKS=()
+while read -r perms _ _ _ _ name _; do
+	[ "${perms:0:1}" = l ] || continue
+	name=${name#./}; LINKS["${name%/}"]=1
+done <<< "$listing"
 manifest=no
 while read -r perms owner _size _date _time name rest; do
 	[ -n "$perms" ] || continue
@@ -72,14 +91,19 @@ while read -r perms owner _size _date _time name rest; do
 			if [ "${target:0:1}" = / ]; then path=${target#/}; else path="$(dirname "$name")/$target"; fi
 			resolved=""
 			IFS=/ read -ra parts <<< "$path"
-			for p in "${parts[@]}"; do
+			through=""
+			for ((j = 0; j < ${#parts[@]}; j++)); do
+				p=${parts[j]}
 				case "$p" in
 					""|.) ;;
 					..) if [[ "$resolved" == */* ]]; then resolved=${resolved%/*}; else resolved=""; fi ;;
 					*) resolved="${resolved:+$resolved/}$p" ;;
 				esac
+				# a folder on the way that's one of its symlinks (the last part may be one: that one's checked itself)
+				(( j < ${#parts[@]} - 1 )) && [ -n "$resolved" ] && [ -n "${LINKS[$resolved]:-}" ] && through=$resolved
 			done
-			ok_place "$resolved" || bad "$name: symlink out of the app's places, to $target"
+			if [ -n "$through" ]; then bad "$name: symlink by way of another, $through"
+			else ok_place "$resolved" || bad "$name: symlink out of the app's places, to $target"; fi
 			;;
 		h) bad "$name: a hard link" ;;
 		*) bad "$name: not a plain file, folder or symlink ($perms)" ;;
@@ -90,6 +114,8 @@ done <<< "$listing"
 # The manifest, as the interface reads it (key=value, the last one for a key, # lines skipped)
 if [ "$manifest" = yes ]; then
 	m=$(dpkg-deb --fsys-tarfile "$DEB" | tar -xO "./usr/share/sprite/apps/$ID.app")
+	# (the interface reads a line at a time into 768 bytes, so a longer one would be two lines to it and one here)
+	awk 'length($0) > 500 { exit 1 }' <<< "$m" || bad "manifest: a line longer than 500 bytes"
 	val() { sed -n "s/^$1=//p" <<< "$m" | tail -1 | sed 's/[[:space:]]*$//'; }
 	keys=$(grep -v '^#' <<< "$m" | grep '=' | sed 's/=.*//' | sort -u)
 	for k in $keys; do
@@ -122,6 +148,7 @@ if [ "$manifest" = yes ]; then
 	for a in $(val allow); do
 		case "$a" in network|sound|microphone|music) ;; *) bad "manifest: allow=$a (network, sound, microphone or music)" ;; esac
 	done
+	[ "$(echo $(val allow))" = "$(echo $(dpkg-deb -f "$DEB" X-Sprite-Allow))" ] || bad "X-Sprite-Allow, which the Shop shows, isn't the manifest's allow="
 fi
 
 [ "$FAILS" -eq 0 ] || { echo "$PKG: $FAILS problem(s)"; exit 1; }

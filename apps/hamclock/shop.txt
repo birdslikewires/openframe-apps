@@ -3,6 +3,7 @@ version=4.33
 author=Elwood Downey and the openhamclock contributors
 licence=MIT
 source=https://github.com/openhamclock/hamclock
+changes=https://github.com/openhamclock/hamclock/compare/v{old}.0...v{new}.0
 community=https://discord.gg/wb8ATjVn6M
 
 HamClock displays what the sun and the ionosphere are doing to radio, with solar flux, sunspots, the K index and band conditions, and DX spots if you'd like them.

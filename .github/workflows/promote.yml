@@ -16,6 +16,7 @@ on:
 permissions:
   contents: write
   issues: write
+  actions: write    # starting publish.yml again, if this displaced one (below)
 
 jobs:
   promote:
@@ -23,7 +24,7 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       (!github.event.issue.pull_request && github.event.comment.user.login == (vars.TESTING_ASSIGNEE || 'andydvsn') &&
        contains(github.event.issue.labels.*.name, 'testing') &&
-       contains(fromJSON('["ok","ok.","ok!","no","no.","no!"]'), github.event.comment.body))
+       contains(fromJSON('["ok","ok.","ok!","no","no.","no!","ok\n","ok\r\n","no\n","no\r\n"]'), github.event.comment.body))
     runs-on: ubuntu-latest
     # In turn with the package build (both write the apt repository), and here on the job, not
     # the workflow: a run waits for its turn in the group, and a newer run waiting there
@@ -133,6 +134,17 @@ jobs:
         run: |
           list=$(sed -n 's/^promoted //p' promoted.txt | tr '\n' ',' | sed 's/,$//; s/,/, /g')
           bash ci/testing-issue.sh "Promoted to every OpenFrame: ${list:-nothing}."
+
+      # GitHub keeps one run waiting in a concurrency group, and cancels the one already waiting there: a publish that was waiting when this arrived is started again (it builds whatever isn't published yet, so nothing is built twice).
+      - name: Start a publish this displaced
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          t=$(date -u -d "$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" -q .created_at)" +%s)
+          since=$(date -u -d "@$((t - 120))" +%Y-%m-%dT%H:%M:%SZ)
+          n=$(gh run list -R "${GITHUB_REPOSITORY}" --workflow publish.yml --status cancelled -L 20 --json updatedAt -q "[.[] | select(.updatedAt >= \"${since}\")] | length")
+          if [ "${n:-0}" -gt 0 ]; then echo "A publish waiting behind this was cancelled: starting it again."; gh workflow run publish.yml -R "${GITHUB_REPOSITORY}" --ref main; fi
 
       - name: Reject
         if: env.ACTION == 'reject'

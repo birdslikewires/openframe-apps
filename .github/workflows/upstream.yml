@@ -43,7 +43,8 @@ jobs:
           while read -r id old new; do
             name=$(sed -n 's/^name=//p' "apps/$id/app.txt" | tail -1)
             git add "apps/$id"
-            git commit -q -m "Update ${name:-$id} to $new" -m "Upstream's newest release, found by upstream.yml. It was $old." -m "Source SHA-256 $(sed -n 's/^SHA256=//p' "apps/$id/build.sh")"
+            changes=$(sed -n 's/^changes=//p' "apps/$id/shop.txt" | tail -1 | sed "s/{old}/$old/g; s/{new}/$new/g")
+            git commit -q -m "Update ${name:-$id} to $new" -m "Upstream's newest release, found by upstream.yml. It was $old.${changes:+ What changed: $changes}" -m "Source SHA-256 $(sed -n 's/^SHA256=//p' "apps/$id/build.sh")"
           done < updated.txt
           git push origin HEAD:main
 

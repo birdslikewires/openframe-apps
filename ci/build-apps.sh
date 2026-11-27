@@ -43,16 +43,35 @@ for id in "${ids[@]}"; do
 		[ -f "apps/$id/$f" ] || { echo "apps/$id has no $f"; exit 1; }
 	done
 	version=$(bash ci/app-version.sh "$id")
+	# newer than any version published (a version= added later, or lowered by hand, can sort lower, and units would never take it)
+	for f in apt-repo/pool/*/ofapp-"$id"_*.deb; do
+		[ -e "$f" ] || continue
+		v=${f##*/}; v=${v#ofapp-"$id"_}; v=${v%_*}
+		dpkg --compare-versions "$version" gt "$v" || { echo "$id: $version isn't newer than $v, which is published (OpenFrames wouldn't take it)"; exit 1; }
+	done
 	o="$OUT/$id"
 	rm -rf "$o"; mkdir -p "$o"
 	echo "::group::Build ofapp-$id $version"
 	"${RUN[@]}" -v "$ROOT/apps/$id:/recipe:ro" -v "$ROOT/ci:/ci:ro" -v "$o:/out" "$IMAGE" \
 		bash /ci/build-app.sh /recipe "$id" "$version" /out
 	echo "::endgroup::"
-	deb=$(ls "$o"/ofapp-"$id"_"$version"_*.deb)
+	# The build's container wrote <out>/<id>/, so only what build-app.sh makes is taken from it: one package, named for this app and version, and its source, plain files in a folder of their own. Anything else, a second package say, stops it here, before the check, as publish signs what's listed.
+	deb=""
+	for f in "$o"/* "$o"/.[!.]* "$o"/..?*; do
+		[ -e "$f" ] || [ -L "$f" ] || continue
+		n=${f##*/}
+		if { [ "$n" = "ofapp-${id}_${version}_i386.deb" ] || [ "$n" = "ofapp-${id}_${version}_all.deb" ]; } && [ -f "$f" ] && [ ! -L "$f" ] && [ -z "$deb" ]; then
+			deb=$f
+		elif [ "$n" = "source-ofapp-$id" ] && [ -d "$f" ] && [ ! -L "$f" ] && [ -z "$(find "$f" -mindepth 1 \( ! -type f -o -links +1 \) -print -quit)" ]; then
+			:
+		else
+			echo "$id: the build left $n, which isn't its package or its source (plain files)"; exit 1
+		fi
+	done
+	[ -n "$deb" ] || { echo "$id: no package ofapp-${id}_${version}_(i386|all).deb"; exit 1; }
 	echo "::group::Check ofapp-$id $version"
 	"${RUN[@]}" --network none -v "$ROOT/ci:/ci:ro" -v "$o:/out:ro" -v "$ICONS:/icons.txt:ro" "$IMAGE" \
-		bash /ci/check-app.sh "/out/$(basename "$deb")" "$id" /icons.txt
+		bash /ci/check-app.sh "/out/$(basename "$deb")" "$id" /icons.txt "$version"
 	"${RUN[@]}" -v "$ROOT/apps/$id:/recipe:ro" -v "$ROOT/ci:/ci:ro" -v "$o:/out:ro" "$IMAGE" \
 		bash /ci/test-app.sh "/out/$(basename "$deb")" "$id" /recipe
 	echo "::endgroup::"

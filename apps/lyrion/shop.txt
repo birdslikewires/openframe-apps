@@ -3,6 +3,7 @@ version=9.1.1
 author=Logitech and the Lyrion community
 licence=GPL-2.0
 source=https://github.com/LMS-Community/slimserver
+changes=https://github.com/LMS-Community/slimserver/compare/{old}...{new}
 community=https://forums.lyrion.org/
 
 Lyrion Music Server, which used to be Logitech Media Server, keeps your music library and plays it to Squeezebox players around the house, including SqueezePlay on this OpenFrame, which finds it by itself.
