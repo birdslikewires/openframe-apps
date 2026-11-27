@@ -1,0 +1,2 @@
+# avahi-daemon, which shairport-sync announces itself through (over the system bus) so iPhones and Macs find it
+avahi-daemon

@@ -1,0 +1,4 @@
+# The compiler and tools for FFmpeg, nqptp and shairport-sync (autoconf: their releases are git trees without configure)
+build-essential autoconf automake libtool pkg-config xxd nasm xz-utils libplist-utils
+# what shairport-sync links against (FFmpeg comes from its own source, below)
+libpopt-dev libconfig-dev libasound2-dev libavahi-client-dev libssl-dev libsoxr-dev libplist-dev libsodium-dev uuid-dev libgcrypt20-dev

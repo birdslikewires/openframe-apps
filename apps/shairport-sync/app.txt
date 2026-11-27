@@ -1,0 +1,8 @@
+# Shairport Sync, an AirPlay 2 receiver, as a service: it runs in the background, whatever's on the screen, so music from an iPhone, iPad or Mac plays on the OpenFrame, in step with other AirPlay speakers. nqptp, AirPlay 2's clock, comes with it, and is why it needs lowports (PTP's 319 and 320); shairport-sync itself runs without that.
+name=Shairport Sync
+exec=/usr/lib/ofapp-shairport-sync/shairport-sync-service
+icon=speaker
+color=2f6f73
+kind=service
+memory=64
+allow=network sound lowports

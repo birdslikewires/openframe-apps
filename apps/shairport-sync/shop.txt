@@ -1,0 +1,13 @@
+summary=Play music from an iPhone, iPad or Mac.
+version=5.6.3
+author=Mike Brady and the Shairport Sync contributors
+licence=MIT
+source=https://github.com/mikebrady/shairport-sync
+changes=https://github.com/mikebrady/shairport-sync/compare/{old}...{new}
+community=https://github.com/mikebrady/shairport-sync/discussions
+
+Shairport Sync makes the OpenFrame an AirPlay 2 speaker. Choose it on an iPhone, iPad or Mac, and the music plays here, on the OpenFrame's own speaker or its USB DAC.
+
+Several speakers can play together in time, so the OpenFrame can join HomePods, other AirPlay speakers or more OpenFrames around the house, all in step.
+
+It appears under the name the OpenFrame has in Settings, under About. It runs in the background, whatever is on the screen.

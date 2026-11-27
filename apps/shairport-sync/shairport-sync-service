@@ -1,0 +1,17 @@
+#!/bin/bash
+# Shairport Sync as an OpenFrame service: nqptp, AirPlay 2's clock, and shairport-sync together. nqptp alone keeps the right to open low ports (the service's lowports, for PTP's 319 and 320); shairport-sync is started without it. Its settings are written afresh at each start, in $HOME (the service's own folder), with the OpenFrame's name as written in Settings, under About (/etc/machine-info, from openframe-scripts). If either program ends, so does the other, and the service is started again.
+D=/usr/lib/ofapp-shairport-sync
+NAME=$(sed -n 's/^PRETTY_HOSTNAME=//p' /etc/machine-info 2>/dev/null | sed 's/^"\(.*\)"$/\1/; s/\\\(.\)/\1/g')
+[ -n "$NAME" ] || NAME=OpenFrame
+esc() { printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'; }
+# The sound goes where the OpenFrame's does (ALSA's default, which openframe-scripts' of-audio sets), and what's playing, with its artwork, to the OpenFrame's interface (shairport-sync's metadata, over UDP on this OpenFrame only).
+cat > "$HOME/shairport-sync.conf" <<CONF
+general = { name = "$(esc "$NAME")"; output_backend = "alsa"; };
+alsa = { output_device = "default"; };
+metadata = { enabled = "yes"; include_cover_art = "yes"; socket_address = "127.0.0.1"; socket_port = 5555; socket_msglength = 65000; };
+CONF
+"$D/nqptp" &
+setpriv --inh-caps=-all --ambient-caps=-all "$D/shairport-sync" -c "$HOME/shairport-sync.conf" &
+wait -n
+kill $(jobs -p) 2>/dev/null
+exit 1

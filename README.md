@@ -20,6 +20,8 @@ By pull request, adding a folder to `apps/` ([apps/README.md](apps/README.md) sa
 ## The apps
 
 - [HamClock](apps/hamclock/): amateur radio clock and propagation maps.
+- [Lyrion Music Server](apps/lyrion/): your own music library, as a service, for SqueezePlay and Squeezebox players.
+- [Shairport Sync](apps/shairport-sync/): an AirPlay 2 speaker, as a service, for music from an iPhone, iPad or Mac.
 - [SqueezePlay](apps/squeezeplay/): music from Lyrion Music Server, with JiveLite and squeezelite.
 
 ## Licence
