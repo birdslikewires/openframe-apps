@@ -1,0 +1,29 @@
+Package: ofapp-shairport-sync
+Version: 5.6.3-26.11.3
+Architecture: i386
+Maintainer: OpenFrame Project <noreply@openbeak.net>
+Installed-Size: 1893
+Depends: libasound2t64 (>= 1.0.27), libavahi-client3 (>= 0.6.16), libavahi-common3 (>= 0.6.16), libc6 (>= 2.38), libconfig11 (>= 1.7.3), libgcc-s1 (>= 7), libgcrypt20 (>= 1.11.0), libplist-2.0-4 (>= 2.3.0), libpopt0 (>= 1.14), libsodium23 (>= 1.0.8), libsoxr0 (>= 0.1.0), libssl3t64 (>= 3.0.0), libuuid1 (>= 2.31.1), avahi-daemon
+Filename: pool/trixie-testing/ofapp-shairport-sync_5.6.3-26.11.3_i386.deb
+Size: 651140
+MD5sum: eed3b0e63e9dbcd6d8c353d030429d45
+SHA1: 7003792ab53c59a05d8e8219bde59328ed169e3a
+SHA256: ea61f0d78e3ae352e41945670001d7161cf0c64f670b864bbde6b67a485f1fae
+Section: misc
+Priority: optional
+Homepage: https://github.com/mikebrady/shairport-sync
+Description: Play music from an iPhone, iPad or Mac.
+ Shairport Sync makes the OpenFrame an AirPlay 2 speaker. Choose it on an iPhone, iPad or Mac, and the music plays here, on the OpenFrame's own speaker or its USB DAC.
+ .
+ Several speakers can play together in time, so the OpenFrame can join HomePods, other AirPlay speakers or more OpenFrames around the house, all in step.
+ .
+ It appears under the name the OpenFrame has in Settings, under About. It runs in the background, whatever is on the screen.
+X-Sprite-Allow: network sound lowports
+X-Sprite-Author: Mike Brady and the Shairport Sync contributors
+X-Sprite-Color: 2f6f73
+X-Sprite-Community: https://github.com/mikebrady/shairport-sync/discussions
+X-Sprite-Icon: speaker
+X-Sprite-Kind: service
+X-Sprite-Licence: MIT
+X-Sprite-Name: Shairport Sync
+
