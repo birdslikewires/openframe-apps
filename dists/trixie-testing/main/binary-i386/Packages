@@ -1,0 +1,29 @@
+Package: ofapp-lyrion
+Version: 9.1.1-26.11.3
+Architecture: all
+Maintainer: OpenFrame Project <noreply@openbeak.net>
+Installed-Size: 32371
+Depends: perl, libaudio-scan-perl, libclass-xsaccessor-perl, libdbd-sqlite3-perl, libdbi-perl, libencode-detect-perl, libev-perl, libhtml-parser-perl, libimage-scale-perl, libio-aio-perl, libio-interface-perl, libjson-xs-perl, liblinux-inotify2-perl, libsub-name-perl, libtemplate-perl, libxml-parser-perl, libyaml-libyaml-perl, flac, faad, sox, wavpack, lame
+Filename: pool/trixie-testing/ofapp-lyrion_9.1.1-26.11.3_all.deb
+Size: 9260252
+MD5sum: 1b318165d13506cab4f869bd089c93db
+SHA1: cd68653b27ac53e2a05b8b878ff2935e0e47f582
+SHA256: be7d6eb79092f82797c82f67b8a0fecb1d91ad155c4d76689803b51475344ebd
+Section: misc
+Priority: optional
+Homepage: https://github.com/LMS-Community/slimserver
+Description: Your own music library, for SqueezePlay and Squeezebox players.
+ Lyrion Music Server, which used to be Logitech Media Server, keeps your music library and plays it to Squeezebox players around the house, including SqueezePlay on this OpenFrame, which finds it by itself.
+ .
+ It runs in the background, whatever is on the screen. Your music can be on a USB drive plugged into the OpenFrame, or on a computer or NAS on your network, which you can add in Settings, under Services. Lyrion only reads your music, and never changes it.
+ .
+ Set it up from a phone or a computer, at the address shown in Settings, under Services, where a QR code takes you straight there. A large library takes a while to scan the first time.
+X-Sprite-Allow: network music
+X-Sprite-Author: Logitech and the Lyrion community
+X-Sprite-Color: 4b6a88
+X-Sprite-Community: https://forums.lyrion.org/
+X-Sprite-Icon: server
+X-Sprite-Kind: service
+X-Sprite-Licence: GPL-2.0
+X-Sprite-Name: Lyrion Music Server
+
