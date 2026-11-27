@@ -5,7 +5,7 @@
 #   - only the control fields ci/build-app.sh writes, so no Pre-Depends, Conflicts, Breaks, Replaces, Provides, Essential and so on, and Depends only packages by name (and version)
 #   - files only in the app's own places, /usr/lib/ofapp-<id>/, /usr/share/ofapp-<id>/, /usr/share/doc/ofapp-<id>/ and its manifest, /usr/share/sprite/apps/<id>.app
 #   - only plain files, folders and symlinks that stay in those places (never by way of another of its symlinks); all root's, nothing setuid, setgid or sticky, nothing anyone else can write; plain names
-#   - its manifest one the interface reads, with no builtin=, a glyph the interface has, and only network, sound, microphone and music to ask for (what the Shop shows, X-Sprite-Allow, the same)
+#   - its manifest one the interface reads, with no builtin=, a glyph the interface has, and only network, sound, microphone and music to ask for (and lowports, a service's) (what the Shop shows, X-Sprite-Allow, the same)
 set -uo pipefail
 DEB=$1 ID=$2 ICONS=$3 VERSION=${4:-}
 PKG=ofapp-$ID
@@ -146,7 +146,7 @@ if [ "$manifest" = yes ]; then
 	v=$(val web); [ -z "$v" ] || { [ "$kind" = service ] && [[ "$v" =~ ^[0-9]{1,5}$ ]] && [ "$v" -ge 1 ] && [ "$v" -le 65535 ]; } || bad "manifest: web=$v (a port, for a service)"
 	v=$(val memory); [ -z "$v" ] || { [ "$kind" = service ] && [[ "$v" =~ ^[0-9]{2,3}$ ]] && [ "$v" -ge 64 ] && [ "$v" -le 320 ]; } || bad "manifest: memory=$v (64 to 320, for a service)"
 	for a in $(val allow); do
-		case "$a" in network|sound|microphone|music) ;; *) bad "manifest: allow=$a (network, sound, microphone or music)" ;; esac
+		case "$a" in network|sound|microphone|music) ;; lowports) [ "$kind" = service ] || bad "manifest: allow=lowports is for a service" ;; *) bad "manifest: allow=$a (network, sound, microphone, music, or lowports for a service)" ;; esac
 	done
 	[ "$(echo $(val allow))" = "$(echo $(dpkg-deb -f "$DEB" X-Sprite-Allow))" ] || bad "X-Sprite-Allow, which the Shop shows, isn't the manifest's allow="
 fi

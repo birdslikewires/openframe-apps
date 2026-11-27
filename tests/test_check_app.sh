@@ -96,6 +96,8 @@ case_ "a service" pass 'printf "kind=service\nweb=9000\nmemory=320\n" >> usr/sha
 case_ "web= for an app" fail 'echo web=9000 >> usr/share/sprite/apps/demo.app'
 case_ "memory= past 320" fail 'printf "kind=service\nmemory=512\n" >> usr/share/sprite/apps/demo.app; sed -i s/X-Sprite-Kind:.app/X-Sprite-Kind:\ service/ DEBIAN/control'
 case_ "allow=music" pass 'sed -i "s/allow=network/allow=network music/" usr/share/sprite/apps/demo.app; sed -i "s/X-Sprite-Allow:.*/X-Sprite-Allow: network music/" DEBIAN/control'
+case_ "allow=lowports, an app's" fail 'sed -i "s/allow=network/allow=network lowports/" usr/share/sprite/apps/demo.app; sed -i "s/X-Sprite-Allow:.*/X-Sprite-Allow: network lowports/" DEBIAN/control'
+case_ "allow=lowports, a service's" pass 'echo kind=service >> usr/share/sprite/apps/demo.app; sed -i "s/allow=network/allow=network lowports/" usr/share/sprite/apps/demo.app; sed -i "s/X-Sprite-Allow:.*/X-Sprite-Allow: network lowports/; s/X-Sprite-Kind:.app/X-Sprite-Kind: service/" DEBIAN/control'
 case_ "an Allow not the manifest's" fail 'sed -i "s/X-Sprite-Allow:.*/X-Sprite-Allow: sound/" DEBIAN/control'
 case_ "Depends on packages" pass 'echo "Depends: libc6 (>= 2.38), perl, zlib1g (>= 1:1.1.4) | libz-dev" >> DEBIAN/control'
 case_ "an odd Depends" fail 'echo "Depends: libc6:amd64" >> DEBIAN/control'
