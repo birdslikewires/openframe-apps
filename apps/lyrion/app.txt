@@ -1,0 +1,9 @@
+# Lyrion Music Server, which used to be Logitech Media Server, as a service: it runs in the background, whatever's on the screen, and is set up from a phone or a computer at its web page, which Settings, Services shows with a QR code. Its music is what the OpenFrame mounts in /media/music, from USB drives and network shares, which it reads and never changes.
+name=Lyrion Music Server
+exec=/usr/lib/ofapp-lyrion/lyrion
+icon=server
+color=4b6a88
+kind=service
+web=9000
+memory=320
+allow=network music

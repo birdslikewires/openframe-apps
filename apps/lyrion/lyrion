@@ -1,0 +1,5 @@
+#!/bin/sh
+# Lyrion Music Server as an OpenFrame service. Its settings, library and caches are in $HOME (the service's own folder, kept between runs), and the music in /media/music, where the OpenFrame mounts USB drives and network shares. The first time, it's told where the music is and that it's set up (it's set up further at its web page), and not to look for its own updates, which come with the OpenFrame's.
+mkdir -p "$HOME/prefs" "$HOME/cache" "$HOME/log"
+[ -f "$HOME/prefs/server.prefs" ] || printf -- '---\nmediadirs:\n  - /media/music\nwizardDone: 1\ncheckVersion: 0\n' > "$HOME/prefs/server.prefs"
+exec /usr/bin/perl /usr/lib/ofapp-lyrion/server/slimserver.pl --prefsdir "$HOME/prefs" --cachedir "$HOME/cache" --logdir "$HOME/log" --charset utf8 --noinfolog

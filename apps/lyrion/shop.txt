@@ -1,0 +1,12 @@
+summary=Your own music library, for SqueezePlay and Squeezebox players.
+version=9.1.1
+author=Logitech and the Lyrion community
+licence=GPL-2.0
+source=https://github.com/LMS-Community/slimserver
+community=https://forums.lyrion.org/
+
+Lyrion Music Server, which used to be Logitech Media Server, keeps your music library and plays it to Squeezebox players around the house, including SqueezePlay on this OpenFrame, which finds it by itself.
+
+It runs in the background, whatever is on the screen. Your music can be on a USB drive plugged into the OpenFrame, or on a computer or NAS on your network, which you can add in Settings, under Services. Lyrion only reads your music, and never changes it.
+
+Set it up from a phone or a computer, at the address shown in Settings, under Services, where a QR code takes you straight there. A large library takes a while to scan the first time.

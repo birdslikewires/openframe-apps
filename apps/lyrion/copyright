@@ -1,0 +1,12 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Lyrion Music Server
+Source: https://github.com/LMS-Community/slimserver
+
+Files: *
+Copyright: Logitech, Inc., Slim Devices and the Lyrion Music Server contributors
+License: GPL-2.0
+Comment: The CPAN modules it includes are their authors', under their own licences (most of them Perl's, the GPL or the Artistic Licence), as Lyrion's License.txt, below, says.
+
+Files: usr/lib/ofapp-lyrion/server/CPAN/Digest/SHA1.pm usr/lib/ofapp-lyrion/lyrion
+Copyright: 2026 OpenBeak
+License: GPL-2.0

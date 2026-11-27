@@ -94,7 +94,7 @@ if [ "$manifest" = yes ]; then
 	keys=$(grep -v '^#' <<< "$m" | grep '=' | sed 's/=.*//' | sort -u)
 	for k in $keys; do
 		case "$k" in
-			name|exec|icon|color|display|handle|bar|kind|allow) ;;
+			name|exec|icon|color|display|handle|bar|kind|allow|web|memory) ;;
 			builtin) bad "manifest: builtin= is the interface's own" ;;
 			*) bad "manifest: $k= isn't something the interface reads" ;;
 		esac
@@ -114,10 +114,13 @@ if [ "$manifest" = yes ]; then
 	v=$(val display); case "$v" in ""|x11|wayland) ;; *) bad "manifest: display=$v (x11 or wayland)" ;; esac
 	v=$(val handle); case "$v" in ""|normal|faint|hidden) ;; *) bad "manifest: handle=$v (normal, faint or hidden)" ;; esac
 	v=$(val bar); case "$v" in ""|yes|no) ;; *) bad "manifest: bar=$v (yes or no)" ;; esac
-	v=$(val kind); case "$v" in ""|app|screensaver) ;; *) bad "manifest: kind=$v (app or screensaver)" ;; esac
-	[ "${v:-app}" = "$(dpkg-deb -f "$DEB" X-Sprite-Kind)" ] || bad "X-Sprite-Kind isn't the manifest's kind="
+	kind=$(val kind); case "$kind" in ""|app|screensaver|service) ;; *) bad "manifest: kind=$kind (app, screensaver or service)" ;; esac
+	[ "${kind:-app}" = "$(dpkg-deb -f "$DEB" X-Sprite-Kind)" ] || bad "X-Sprite-Kind isn't the manifest's kind="
+	# a service's own: the port of its web page, and the memory it needs (MB; the interface's sandbox allows 64 to 320)
+	v=$(val web); [ -z "$v" ] || { [ "$kind" = service ] && [[ "$v" =~ ^[0-9]{1,5}$ ]] && [ "$v" -ge 1 ] && [ "$v" -le 65535 ]; } || bad "manifest: web=$v (a port, for a service)"
+	v=$(val memory); [ -z "$v" ] || { [ "$kind" = service ] && [[ "$v" =~ ^[0-9]{2,3}$ ]] && [ "$v" -ge 64 ] && [ "$v" -le 320 ]; } || bad "manifest: memory=$v (64 to 320, for a service)"
 	for a in $(val allow); do
-		case "$a" in network|sound|microphone) ;; *) bad "manifest: allow=$a (network, sound or microphone)" ;; esac
+		case "$a" in network|sound|microphone|music) ;; *) bad "manifest: allow=$a (network, sound, microphone or music)" ;; esac
 	done
 fi
 
