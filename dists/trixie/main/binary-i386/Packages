@@ -1,14 +1,14 @@
 Package: ofapp-hamclock
-Version: 4.33-26.11.8
+Version: 4.33-26.11.9
 Architecture: i386
 Maintainer: OpenFrame Project <noreply@openbeak.net>
 Installed-Size: 2167
 Depends: libc6 (>= 2.38), libgcc-s1 (>= 4.2), libstdc++6 (>= 11), libx11-6
-Filename: pool/trixie/ofapp-hamclock_4.33-26.11.8_i386.deb
+Filename: pool/trixie/ofapp-hamclock_4.33-26.11.9_i386.deb
 Size: 762232
-MD5sum: d50aa38c0ab9aa54037fb9dfe97efb65
-SHA1: 1aaf40f3d0a6e1597a97155f1dc4306045a98057
-SHA256: 716006b40823ca6632d73d6d6f560bcf6364a0ee95e92dcc969f3ec44a05cae1
+MD5sum: b8e034f332ffc47173c626b3bb50be34
+SHA1: 2eedb1b1bc54917be40925410797d38ed3225d7c
+SHA256: acf353ed39921ddcbe291d2de8d48602bd85160f4d5696704d5062efbc56063f
 Section: misc
 Priority: optional
 Homepage: https://github.com/openhamclock/hamclock
@@ -26,6 +26,35 @@ X-Sprite-Icon: radio-tower
 X-Sprite-Kind: app
 X-Sprite-Licence: MIT
 X-Sprite-Name: HamClock
+
+Package: ofapp-lyrion
+Version: 9.1.1-26.11.5
+Architecture: i386
+Maintainer: OpenFrame Project <noreply@openbeak.net>
+Installed-Size: 33259
+Depends: libc6 (>= 2.38), zlib1g (>= 1:1.1.4), perl, perlapi-5.40.1, libclass-xsaccessor-perl, libdbd-sqlite3-perl, libdbi-perl, libencode-detect-perl, libev-perl, libhtml-parser-perl, libimage-scale-perl, libio-aio-perl, libio-interface-perl, libjson-xs-perl, liblinux-inotify2-perl, libsub-name-perl, libtemplate-perl, libxml-parser-perl, libyaml-libyaml-perl, flac, faad, sox, wavpack, lame
+Filename: pool/trixie/ofapp-lyrion_9.1.1-26.11.5_i386.deb
+Size: 9590036
+MD5sum: c9a435d541a62169a37630c7c585a5b4
+SHA1: 75d8a8d2dc1db67b1d22e322de4c7c6c06ee2fc5
+SHA256: 9286260fbfc506e64aa60cc2172c9d9899a2a8071b0fc3dbe38a94da0e581e39
+Section: misc
+Priority: optional
+Homepage: https://github.com/LMS-Community/slimserver
+Description: Your own music library, for SqueezePlay and Squeezebox players.
+ Lyrion Music Server, which used to be Logitech Media Server, keeps your music library and plays it to Squeezebox players around the house, including SqueezePlay on this OpenFrame, which finds it by itself.
+ .
+ It runs in the background, whatever is on the screen. Your music can be on a USB drive plugged into the OpenFrame, or on a computer or NAS on your network, which you can add in Settings, under Services. Lyrion only reads your music, and never changes it.
+ .
+ Set it up from a phone or a computer, at the address shown in Settings, under Services, where a QR code takes you straight there. A large library takes a while to scan the first time.
+X-Sprite-Allow: network music
+X-Sprite-Author: Logitech and the Lyrion community
+X-Sprite-Color: 4b6a88
+X-Sprite-Community: https://forums.lyrion.org/
+X-Sprite-Icon: server
+X-Sprite-Kind: service
+X-Sprite-Licence: GPL-2.0
+X-Sprite-Name: Lyrion Music Server
 
 Package: ofapp-squeezeplay
 Version: 26.11.2
