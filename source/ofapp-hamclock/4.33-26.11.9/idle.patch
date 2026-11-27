@@ -1,0 +1,49 @@
+--- a/ESPHamClock/ArduinoLib/Arduino.cpp
++++ b/ESPHamClock/ArduinoLib/Arduino.cpp
+@@ -19,6 +19,8 @@
+ static float max_cpu_usage = DEF_CPU_USAGE;
+ // even at 100% throttle, don't busy-spin the host when loop() has nothing to do
+ #define DEF_MIN_IDLE_LOOP_US 1000
++#define IDLE_REST_US 20000              // OpenFrame: the rest after a pass that found nothing to do (-t 100)
++extern bool mapSweepActive (void);      // earthmap.cpp
+ 
+ char **our_argv;                // our argv for restarting
+ std::string our_dir;            // our storage directory, including trailing /
+@@ -750,8 +752,9 @@
+             struct timeval tv1;
+             gettimeofday (&tv1, NULL);
+             int loop_us = TVUSEC(tv0, tv1);
++            // OpenFrame: a quick pass found nothing to do, so rest IDLE_REST_US rather than polling hundreds of times a second, unless the map is mid-sweep, which draws one row a pass and should finish promptly
+             if (loop_us < DEF_MIN_IDLE_LOOP_US)
+-                usleep (DEF_MIN_IDLE_LOOP_US - loop_us);
++                usleep (mapSweepActive() ? DEF_MIN_IDLE_LOOP_US - loop_us : IDLE_REST_US);
+         }
+ 
+     } else {
+--- a/ESPHamClock/ESPHamClock.cpp
++++ b/ESPHamClock/ESPHamClock.cpp
+@@ -2398,8 +2398,9 @@
+     int dt;
+     while ((dt = millis() - t0) < ms) {
+         checkWebServer(true);
+-        if (dt < WD_DELAY_DT)
+-            delay (dt);
++        // OpenFrame: sleep for what's left (at most WD_DELAY_DT), not for what has passed, which began with delay(0) and spun hundreds of times a second in every wait for a tap
++        if (ms - dt < WD_DELAY_DT)
++            delay (ms - dt);
+         else
+             delay (WD_DELAY_DT);
+     }
+--- a/ESPHamClock/ArduinoLib/Adafruit_RA8875.cpp
++++ b/ESPHamClock/ArduinoLib/Adafruit_RA8875.cpp
+@@ -1876,8 +1876,9 @@
+         // set flag to inform the drawing thread to draw the pr region, wait until finished.
+         // if you know of a better way with mutexes etc let me know
+         pr_draw = true;
++        // OpenFrame: check every 10 ms, not every 1 ms: the drawing thread only looks every REFRESH_US (50 ms), and waitForUser() calls this on every pass over the map, which made hundreds of wake-ups a second in setup and menus
+         while (pr_draw)
+-            usleep (1000);
++            usleep (10000);
+ }
+ 
+ 
