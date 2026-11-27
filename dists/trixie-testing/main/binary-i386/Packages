@@ -1,14 +1,14 @@
 Package: ofapp-lyrion
-Version: 9.1.1-26.11.3
-Architecture: all
+Version: 9.1.1-26.11.4
+Architecture: i386
 Maintainer: OpenFrame Project <noreply@openbeak.net>
-Installed-Size: 32371
-Depends: perl, libaudio-scan-perl, libclass-xsaccessor-perl, libdbd-sqlite3-perl, libdbi-perl, libencode-detect-perl, libev-perl, libhtml-parser-perl, libimage-scale-perl, libio-aio-perl, libio-interface-perl, libjson-xs-perl, liblinux-inotify2-perl, libsub-name-perl, libtemplate-perl, libxml-parser-perl, libyaml-libyaml-perl, flac, faad, sox, wavpack, lame
-Filename: pool/trixie-testing/ofapp-lyrion_9.1.1-26.11.3_all.deb
-Size: 9260252
-MD5sum: 1b318165d13506cab4f869bd089c93db
-SHA1: cd68653b27ac53e2a05b8b878ff2935e0e47f582
-SHA256: be7d6eb79092f82797c82f67b8a0fecb1d91ad155c4d76689803b51475344ebd
+Installed-Size: 33259
+Depends: libc6 (>= 2.38), zlib1g (>= 1:1.1.4), perl, perlapi-5.40.1, libclass-xsaccessor-perl, libdbd-sqlite3-perl, libdbi-perl, libencode-detect-perl, libev-perl, libhtml-parser-perl, libimage-scale-perl, libio-aio-perl, libio-interface-perl, libjson-xs-perl, liblinux-inotify2-perl, libsub-name-perl, libtemplate-perl, libxml-parser-perl, libyaml-libyaml-perl, flac, faad, sox, wavpack, lame
+Filename: pool/trixie-testing/ofapp-lyrion_9.1.1-26.11.4_i386.deb
+Size: 9596060
+MD5sum: 108fe503bf739f5db821064d9bf8570e
+SHA1: 0f8277afa4866754ab0115f7c4c259559a897f3d
+SHA256: b412735826fb30f752e1ca9b079c5390c4a6bba666c78f09436240e4a0ce84a2
 Section: misc
 Priority: optional
 Homepage: https://github.com/LMS-Community/slimserver
