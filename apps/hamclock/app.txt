@@ -1,7 +1,7 @@
 # HamClock, as the interface shows and runs it. -t 100 runs its loop without its own CPU throttle, which can't measure the loop here: build.sh patches the loop to rest when it has nothing to do instead (idle.patch). -b points it at the Open HamClock Backend, as clearskyinstitute.com, the original backend, is being retired. It needs the network, because it lives on its data.
 name=HamClock
 exec=/usr/lib/ofapp-hamclock/hamclock -t 100 -b ohb.hamclock.app:80
-icon=radio
+icon=radio-tower
 color=b8860b
 display=x11
 allow=network
