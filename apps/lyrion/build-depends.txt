@@ -1,4 +1,6 @@
 # The compiled Perl modules Lyrion needs, from Debian, as Lyrion has none for i386 with Trixie's Perl 5.40: installed for the build, which takes Lyrion's own copies of them out (build.sh), and depended on (depends.txt, the same list).
-libaudio-scan-perl libclass-xsaccessor-perl libdbd-sqlite3-perl libdbi-perl libencode-detect-perl libev-perl
+libclass-xsaccessor-perl libdbd-sqlite3-perl libdbi-perl libencode-detect-perl libev-perl
 libhtml-parser-perl libimage-scale-perl libio-aio-perl libio-interface-perl libjson-xs-perl liblinux-inotify2-perl
 libsub-name-perl libtemplate-perl libxml-parser-perl libyaml-libyaml-perl
+# and what build.sh builds Audio::Scan and MP3::Cut::Gapless with, and tests Audio::Scan with
+perl gcc make libc6-dev zlib1g-dev libextutils-makemaker-cpanfile-perl libtest-warn-perl

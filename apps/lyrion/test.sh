@@ -1,4 +1,6 @@
-# Lyrion starts from the package, with Debian's modules, as the OpenFrame runs it (its run script, in a throwaway home, and as a user of its own, as Lyrion won't run as root), its web page answers, and it says it's this version.
+# The two compiled modules built with the package load from it (Audio::Scan at 1.02 or later, which Lyrion plays Opus with), then Lyrion starts from the package, with Debian's other modules, as the OpenFrame runs it (its run script, in a throwaway home, and as a user of its own, as Lyrion won't run as root), its web page answers, and it says it's this version.
+arch=$(echo /usr/lib/ofapp-lyrion/server/CPAN/arch/*/*)
+perl -I"$arch" -I/usr/lib/ofapp-lyrion/server/CPAN -e 'use Audio::Scan; use MP3::Cut::Gapless; die "Audio::Scan $Audio::Scan::VERSION from $INC{q(Audio/Scan.pm)}\n" unless $Audio::Scan::VERSION >= 1.02 && $INC{q(Audio/Scan.pm)} =~ m{^/usr/lib/ofapp-lyrion/}; print "Audio::Scan $Audio::Scan::VERSION, MP3::Cut::Gapless $MP3::Cut::Gapless::VERSION\n"'
 export HOME=$(mktemp -d)
 chmod 777 "$HOME"
 setpriv --reuid=65534 --regid=65534 --clear-groups /usr/lib/ofapp-lyrion/lyrion > "$HOME/out.txt" 2>&1 &

@@ -7,6 +7,11 @@ Copyright: Logitech, Inc., Slim Devices and the Lyrion Music Server contributors
 License: GPL-2.0
 Comment: The CPAN modules it includes are their authors', under their own licences (most of them Perl's, the GPL or the Artistic Licence), as Lyrion's License.txt, below, says.
 
+Files: usr/lib/ofapp-lyrion/server/CPAN/arch/*
+Copyright: Andy Grundman, Logitech, Inc. and the Lyrion Music Server contributors
+License: GPL-2.0
+Comment: Audio::Scan and the compiled half of MP3::Cut::Gapless, built from Lyrion's sources (their tarballs are published beside the package). Parts of Audio::Scan are under other free licences, given in full after the GPL, below.
+
 Files: usr/lib/ofapp-lyrion/server/CPAN/Digest/SHA1.pm usr/lib/ofapp-lyrion/lyrion
 Copyright: 2026 OpenBeak
 License: GPL-2.0

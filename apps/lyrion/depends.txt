@@ -1,6 +1,6 @@
-# Perl, and the compiled Perl modules Lyrion has none of for i386 with Trixie's Perl (the same list as build-depends.txt). Digest::SHA1, which Debian doesn't package, is SHA1.pm, over Perl's own Digest::SHA; MP3::Cut::Gapless, for MP3 tracks cut from a CUE sheet, isn't here at all.
-perl
-libaudio-scan-perl libclass-xsaccessor-perl libdbd-sqlite3-perl libdbi-perl libencode-detect-perl libev-perl
+# Perl, and the compiled Perl modules Lyrion has none of for i386 with Trixie's Perl (the same list as build-depends.txt). Digest::SHA1, which Debian doesn't package, is SHA1.pm, over Perl's own Digest::SHA. Audio::Scan and MP3::Cut::Gapless are built with the package (build.sh), for the Perl it was built with, so it depends on that Perl's interface, as Debian's compiled modules do (what they link against, zlib, is found from them).
+perl perlapi-5.40.1
+libclass-xsaccessor-perl libdbd-sqlite3-perl libdbi-perl libencode-detect-perl libev-perl
 libhtml-parser-perl libimage-scale-perl libio-aio-perl libio-interface-perl libjson-xs-perl liblinux-inotify2-perl
 libsub-name-perl libtemplate-perl libxml-parser-perl libyaml-libyaml-perl
 # The programs Lyrion converts and decodes with, Debian's rather than the copies it ships, found on the path
