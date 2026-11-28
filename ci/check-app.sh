@@ -131,6 +131,8 @@ if [ "$manifest" = yes ]; then
 	[ "$name" = "$(dpkg-deb -f "$DEB" X-Sprite-Name)" ] || bad "X-Sprite-Name isn't the manifest's name="
 	[ -n "$exec" ] || bad "manifest: no exec="
 	[ "${#exec}" -lt 500 ] || bad "manifest: exec= too long"
+	# one command and its arguments, which the interface runs with exec: nothing a shell reads as more (no ; & | < > $ ` quotes, globs, ( ) { } ~ or #), and no VAR=value before it
+	[[ "$exec" =~ ^[A-Za-z0-9_@%+=:,./-]+(\ [A-Za-z0-9_@%+=:,./-]+)*$ ]] && [[ "${exec%% *}" != *=* ]] || bad "manifest: exec= isn't one command and its arguments (put anything more in a script)"
 	if [ -n "$icon" ]; then
 		glyphs=$(sed 's/#.*//; s/=/ /' "$ICONS" | tr -s ' \t' '\n' | grep -v '^$')
 		grep -qxF "$icon" <<< "$glyphs" || [[ "$icon" =~ ^[A-Za-z0-9]{1,2}$ ]] ||
