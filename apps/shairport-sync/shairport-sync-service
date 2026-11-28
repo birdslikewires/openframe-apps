@@ -1,17 +1,41 @@
 #!/bin/bash
 # Shairport Sync as an OpenFrame service: nqptp, AirPlay 2's clock, and shairport-sync together. nqptp alone keeps the right to open low ports (the service's lowports, for PTP's 319 and 320); shairport-sync is started without it. Its settings are written afresh at each start, in $HOME (the service's own folder), with the OpenFrame's name as written in Settings, under About (/etc/machine-info, from openframe-scripts). If either program ends, so does the other, and the service is started again.
 D=/usr/lib/ofapp-shairport-sync
+ASOUND=/etc/asound.conf
 NAME=$(sed -n 's/^PRETTY_HOSTNAME=//p' /etc/machine-info 2>/dev/null | sed 's/^"\(.*\)"$/\1/; s/\\\(.\)/\1/g')
 [ -n "$NAME" ] || NAME=OpenFrame
 esc() { printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'; }
-# The sound goes where the OpenFrame's does (ALSA's default, which openframe-scripts' of-audio sets), and what's playing, with its artwork, to the OpenFrame's interface (shairport-sync's metadata, over UDP on this OpenFrame only).
+
+# The volume. The OpenFrame's sound goes where openframe-scripts' of-audio sends it, ALSA's default in /etc/asound.conf, either mixed (the speaker, or a DAC whose volume the OpenFrame sets) or direct to a DAC, untouched, its own volume at full and the amplifier setting the level. Mixed, the iPhone's or Mac's volume is the OpenFrame's: shairport-sync sets the card's own volume control (the one Settings and the status bar set, found as of-audio finds it: Master, PCM, Speaker or Headphone, else the first that has a volume, which is of-audio's software one, OpenFrame, on a DAC with none of its own), and leaves the sound as it is. Direct, the sender's volume is ignored altogether, so nothing changes the sound on its way to the DAC.
+general_vol='ignore_volume_control = "yes";' alsa_vol=""
+if ! grep -q '^[[:space:]]*slave\.pcm "hw:' "$ASOUND" 2>/dev/null; then
+	card=$(sed -n 's/^[[:space:]]*card "\(.*\)"$/\1/p' "$ASOUND" 2>/dev/null | tail -1)
+	mapfile -t names < <(amixer ${card:+-c "$card"} scontrols 2>/dev/null | sed -n "s/^Simple mixer control '\(.*\)',0$/\1/p")
+	control=""
+	for c in Master PCM Speaker Headphone "${names[@]}"; do
+		for n in "${names[@]}"; do
+			[ "$n" = "$c" ] && amixer ${card:+-c "$card"} sget "$n" 2>/dev/null | grep -q '^  Capabilities:.*pvolume' && { control=$n; break 2; }
+		done
+	done
+	# (no control at all: shairport-sync's own volume, as there's nothing else to set)
+	general_vol=""
+	[ -n "$control" ] && alsa_vol="mixer_control_name = \"$(esc "$control")\";${card:+ mixer_device = \"hw:$card\";}"
+fi
+
+# The sound goes to ALSA's default, and what's playing, with its artwork, to the OpenFrame's interface (shairport-sync's metadata, over UDP on this OpenFrame only).
 cat > "$HOME/shairport-sync.conf" <<CONF
-general = { name = "$(esc "$NAME")"; output_backend = "alsa"; };
-alsa = { output_device = "default"; };
+general = { name = "$(esc "$NAME")"; output_backend = "alsa"; $general_vol };
+alsa = { output_device = "default"; $alsa_vol };
 metadata = { enabled = "yes"; include_cover_art = "yes"; socket_address = "127.0.0.1"; socket_port = 5555; socket_msglength = 65000; };
 CONF
+
 "$D/nqptp" &
 setpriv --inh-caps=-all --ambient-caps=-all "$D/shairport-sync" -c "$HOME/shairport-sync.conf" &
+# The way the sound goes changed (Settings, Audio: another output, or Direct to DAC): started again, the new way, as of-audio restarts what's playing (this too, if it's playing)
+seen=$(cksum < "$ASOUND" 2>/dev/null)
+while sleep 5; do
+	[ "$(cksum < "$ASOUND" 2>/dev/null)" = "$seen" ] || break
+done &
 wait -n
 kill $(jobs -p) 2>/dev/null
 exit 1
