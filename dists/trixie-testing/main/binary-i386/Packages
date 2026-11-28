@@ -1,14 +1,14 @@
 Package: ofapp-shairport-sync
-Version: 5.6.3-26.11.3
+Version: 5.6.3-26.11.4
 Architecture: i386
 Maintainer: OpenFrame Project <noreply@openbeak.net>
-Installed-Size: 1893
+Installed-Size: 1897
 Depends: libasound2t64 (>= 1.0.27), libavahi-client3 (>= 0.6.16), libavahi-common3 (>= 0.6.16), libc6 (>= 2.38), libconfig11 (>= 1.7.3), libgcc-s1 (>= 7), libgcrypt20 (>= 1.11.0), libplist-2.0-4 (>= 2.3.0), libpopt0 (>= 1.14), libsodium23 (>= 1.0.8), libsoxr0 (>= 0.1.0), libssl3t64 (>= 3.0.0), libuuid1 (>= 2.31.1), avahi-daemon
-Filename: pool/trixie-testing/ofapp-shairport-sync_5.6.3-26.11.3_i386.deb
-Size: 651140
-MD5sum: eed3b0e63e9dbcd6d8c353d030429d45
-SHA1: 7003792ab53c59a05d8e8219bde59328ed169e3a
-SHA256: ea61f0d78e3ae352e41945670001d7161cf0c64f670b864bbde6b67a485f1fae
+Filename: pool/trixie-testing/ofapp-shairport-sync_5.6.3-26.11.4_i386.deb
+Size: 652584
+MD5sum: 550e080c0c7c908346a785e4d14377c7
+SHA1: f693ea87cb8465e6a030d436032386bd7d2ea072
+SHA256: 7d812fc1c4f602149587e719935fa7694363de7def00116fbf8bf373f588960c
 Section: misc
 Priority: optional
 Homepage: https://github.com/mikebrady/shairport-sync
