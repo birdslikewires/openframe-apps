@@ -1,2 +1,4 @@
 # avahi-daemon, which shairport-sync announces itself through (over the system bus) so iPhones and Macs find it
 avahi-daemon
+# alsa-utils, whose amixer the run script finds the OpenFrame's volume control with (in the image anyway)
+alsa-utils

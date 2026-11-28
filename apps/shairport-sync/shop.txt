@@ -1,7 +1,7 @@
 summary=Play music from an iPhone, iPad or Mac.
 version=5.6.3
 author=Mike Brady and the Shairport Sync contributors
-licence=MIT
+licence=MIT, LGPL-2.1+ and GPL-2
 source=https://github.com/mikebrady/shairport-sync
 changes=https://github.com/mikebrady/shairport-sync/compare/{old}...{new}
 community=https://github.com/mikebrady/shairport-sync/discussions

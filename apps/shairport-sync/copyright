@@ -5,12 +5,13 @@ Source: https://github.com/mikebrady/shairport-sync
 Files: usr/lib/ofapp-shairport-sync/shairport-sync
 Copyright: 2014-2026 Mike Brady and the Shairport Sync contributors
            2011-2013 James Laird
-License: MIT
-Comment: Shairport Sync, built with parts of FFmpeg (its AAC and ALAC decoders and its resampler, LGPL-2.1 or later, statically linked). Shairport Sync's LICENSES, listing the licences of its other parts, and the full licences follow. The sources it was built from (Shairport Sync's, FFmpeg's and nqptp's releases) are published beside the package, at https://apps.openbeak.net/source/ofapp-shairport-sync/<version>/, with the recipe that builds them (below), so it can be relinked against another FFmpeg.
+           2000-2026 the FFmpeg developers
+License: MIT and LGPL-2.1+
+Comment: Shairport Sync, built with parts of FFmpeg (its AAC, ALAC and 16-bit PCM decoders and its resampler, LGPL-2.1 or later, statically linked). Shairport Sync's LICENSES, listing the licences of its other parts, and the full licences follow. The sources it was built from (Shairport Sync's, FFmpeg's and nqptp's releases) are published beside the package, at https://apps.openbeak.net/source/ofapp-shairport-sync/<version>/, with the recipe that builds them (below), so it can be relinked against another FFmpeg.
 
 Files: usr/lib/ofapp-shairport-sync/nqptp
 Copyright: 2021-2026 Mike Brady
-License: GPL-2.0
+License: GPL-2
 Comment: nqptp, AirPlay 2's clock, from https://github.com/mikebrady/nqptp
 
 Files: recipe/*

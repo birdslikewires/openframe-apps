@@ -14,18 +14,22 @@ log() { "$@" >> build.log 2>&1 || { tail -40 build.log; exit 1; }; }
 # (the upstream Makefiles run without this build's own settings: FFmpeg's make install would put itself in the package, under DESTDIR)
 umake() { env -u SOURCES -u DESTDIR -u APPDIR -u SHAREDIR -u DOCDIR make "$@"; }
 
-# FFmpeg, which shairport-sync decodes AirPlay's AAC and ALAC with, and changes the rate with: only those two decoders and its resampler, built into shairport-sync, which then takes 1.8 MB, where Debian's libavcodec brings 150 MB of codecs with it. No GPL parts (LGPL-2.1 or later).
+# FFmpeg, which shairport-sync decodes AirPlay's AAC and ALAC with (and the 16-bit PCM some senders announce, pyatv's and Home Assistant's: without it, such a sender stops shairport-sync), and changes the rate with: only those decoders and its resampler, built into shairport-sync, which then takes 1.8 MB, where Debian's libavcodec brings 150 MB of codecs with it. No GPL parts (LGPL-2.1 or later).
 tar -xJf "ffmpeg-$FFMPEG.tar.xz"
 FF="$PWD/ff"
 ( cd "ffmpeg-$FFMPEG" && log ./configure --prefix="$FF" --enable-static --disable-shared --enable-pic --disable-autodetect \
 	--disable-everything --disable-programs --disable-doc --disable-network --disable-avdevice --disable-avfilter --disable-swscale \
-	--enable-decoder=aac,alac --enable-swresample && log umake -j"$(nproc)" && log umake install )
+	--enable-decoder=aac,alac,pcm_s16be --enable-swresample && log umake -j"$(nproc)" && log umake install )
 
 tar -xzf "nqptp-$NQPTP.tar.gz"
 ( cd "nqptp-$NQPTP" && log autoreconf -fi && log ./configure && log umake -j"$(nproc)" )
 
 # shairport-sync: ALSA out, announced through avahi, AirPlay 2, and its metadata (what's playing, and its artwork) for the OpenFrame's interface, over UDP (metadata-multicast, which sends to any address, 127.0.0.1 here)
 tar -xzf "shairport-sync-$UPSTREAM.tar.gz"
+# shairport-sync stops if nqptp's shared memory isn't the version it was built for: a newer Shairport Sync (update.sh brings them) may need a newer nqptp, pinned here
+shm() { sed -n 's/^#define NQPTP_SHM_STRUCTURES_VERSION \([0-9]*\).*/\1/p' "$1/nqptp-shm-structures.h"; }
+[ -n "$(shm "nqptp-$NQPTP")" ] && [ "$(shm "nqptp-$NQPTP")" = "$(shm "shairport-sync-$UPSTREAM")" ] ||
+	{ echo "shairport-sync $UPSTREAM wants nqptp's shared memory version $(shm "shairport-sync-$UPSTREAM"), and nqptp $NQPTP has $(shm "nqptp-$NQPTP"): a newer nqptp is needed"; exit 1; }
 ( cd "shairport-sync-$UPSTREAM" && export PKG_CONFIG_PATH="$FF/lib/pkgconfig" && log autoreconf -fi &&
 	log ./configure --sysconfdir=/etc --with-pkg-config --with-alsa --with-avahi --with-ssl=openssl --with-soxr --with-metadata --with-metadata-multicast --with-airplay-2 --with-ffmpeg &&
 	log umake -j"$(nproc)" )
@@ -35,7 +39,7 @@ install -s -m 755 "shairport-sync-$UPSTREAM/shairport-sync" "nqptp-$NQPTP/nqptp"
 install -m 755 "$RECIPE/shairport-sync-service" "$DESTDIR$APPDIR/"
 {
 	cat "$RECIPE/copyright"
-	printf '\nShairport Sync, LICENSES:\n'; sed 's/^/ /; s/^ $/ ./' "shairport-sync-$UPSTREAM/LICENSES"
-	printf '\nLicense: GPL-2.0\n'; sed 's/^/ /; s/^ $/ ./' "nqptp-$NQPTP/LICENSE"
+	printf '\nLicense: MIT\n'; sed 's/^/ /; s/^ $/ ./' "shairport-sync-$UPSTREAM/LICENSES"
+	printf '\nLicense: GPL-2\n'; sed 's/^/ /; s/^ $/ ./' "nqptp-$NQPTP/LICENSE"
 	printf '\nLicense: LGPL-2.1+\n'; sed 's/^/ /; s/^ $/ ./' "ffmpeg-$FFMPEG/COPYING.LGPLv2.1"
 } > "$DESTDIR$DOCDIR/copyright"
