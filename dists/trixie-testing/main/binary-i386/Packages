@@ -1,14 +1,14 @@
 Package: ofapp-shairport-sync
-Version: 5.6.3-26.11.4
+Version: 5.6.3-26.11.6
 Architecture: i386
 Maintainer: OpenFrame Project <noreply@openbeak.net>
-Installed-Size: 1897
-Depends: libasound2t64 (>= 1.0.27), libavahi-client3 (>= 0.6.16), libavahi-common3 (>= 0.6.16), libc6 (>= 2.38), libconfig11 (>= 1.7.3), libgcc-s1 (>= 7), libgcrypt20 (>= 1.11.0), libplist-2.0-4 (>= 2.3.0), libpopt0 (>= 1.14), libsodium23 (>= 1.0.8), libsoxr0 (>= 0.1.0), libssl3t64 (>= 3.0.0), libuuid1 (>= 2.31.1), avahi-daemon
-Filename: pool/trixie-testing/ofapp-shairport-sync_5.6.3-26.11.4_i386.deb
-Size: 652584
-MD5sum: 550e080c0c7c908346a785e4d14377c7
-SHA1: f693ea87cb8465e6a030d436032386bd7d2ea072
-SHA256: 7d812fc1c4f602149587e719935fa7694363de7def00116fbf8bf373f588960c
+Installed-Size: 1904
+Depends: libasound2t64 (>= 1.0.27), libavahi-client3 (>= 0.6.16), libavahi-common3 (>= 0.6.16), libc6 (>= 2.38), libconfig11 (>= 1.7.3), libgcc-s1 (>= 7), libgcrypt20 (>= 1.11.0), libplist-2.0-4 (>= 2.3.0), libpopt0 (>= 1.14), libsodium23 (>= 1.0.8), libsoxr0 (>= 0.1.0), libssl3t64 (>= 3.0.0), libuuid1 (>= 2.31.1), avahi-daemon, alsa-utils
+Filename: pool/trixie-testing/ofapp-shairport-sync_5.6.3-26.11.6_i386.deb
+Size: 655952
+MD5sum: 377d85ea8cc5afda4f64854a0571e35c
+SHA1: ffd64c7bcdae5c084b40511bae4f090bd68059ed
+SHA256: f62fee3f7a2ca2333feab52dcf458c95e6ff9db03cf17c912861f3cefc023e18
 Section: misc
 Priority: optional
 Homepage: https://github.com/mikebrady/shairport-sync
@@ -24,6 +24,6 @@ X-Sprite-Color: 2f6f73
 X-Sprite-Community: https://github.com/mikebrady/shairport-sync/discussions
 X-Sprite-Icon: speaker
 X-Sprite-Kind: service
-X-Sprite-Licence: MIT
+X-Sprite-Licence: MIT, LGPL-2.1+ and GPL-2
 X-Sprite-Name: Shairport Sync
 
