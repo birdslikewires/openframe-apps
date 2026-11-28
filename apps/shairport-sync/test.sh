@@ -1,5 +1,7 @@
 # shairport-sync from the package is this version, with AirPlay 2, and reads the settings its run script writes (it shows them, then stops: there is no avahi here to announce it) (to a throwaway home, with a name that needs escaping); nqptp from it starts and opens AirPlay 2's clock ports, as root here (on the OpenFrame, with lowports).
 export HOME=$(mktemp -d)
+# ... built with metadata over UDP (metadata-multicast), which the interface's Now Playing reads: without it, metadata= is quietly ignored
+grep -qa 'Could not malloc metadata multicast socket buffer' /usr/lib/ofapp-shairport-sync/shairport-sync || { echo "shairport-sync was built without metadata over UDP (--with-metadata-multicast)"; exit 1; }
 /usr/lib/ofapp-shairport-sync/shairport-sync -V | grep -q "^${VERSION%%-*}-AirPlay2-" || { echo "shairport-sync isn't ${VERSION%%-*} with AirPlay 2: $(/usr/lib/ofapp-shairport-sync/shairport-sync -V)"; exit 1; }
 printf 'PRETTY_HOSTNAME="Andy\\"s \\\\ Kitchen"\n' > "$HOME/machine-info"
 sed "s|/etc/machine-info|$HOME/machine-info|; /^\"\$D\/nqptp\" &$/,\$d" /usr/lib/ofapp-shairport-sync/shairport-sync-service > "$HOME/conf.sh"
